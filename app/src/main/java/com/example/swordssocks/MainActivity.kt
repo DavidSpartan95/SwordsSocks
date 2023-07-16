@@ -148,7 +148,15 @@ fun Character(attack:Pair<Boolean,String>, num:Int) {
 
     Box(Modifier, Alignment.Center) {
         Image(
-            painter = painterResource(R.drawable.monster),
+            painter = painterResource(R.drawable.asset_1),
+            contentDescription = null,
+            modifier = Modifier
+                .size(200.dp)
+                .graphicsLayer(alpha = opacity),
+            colorFilter = colorTint
+        )
+        Image(
+            painter = painterResource(R.drawable.asset_2),
             contentDescription = null,
             modifier = Modifier
                 .size(200.dp)
