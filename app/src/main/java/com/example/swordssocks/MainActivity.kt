@@ -93,12 +93,13 @@ fun Character(attack:Pair<Boolean,String>, num:Int) {
         if (attack.first){
             when (attack.second){
                 "normal" -> {
+                    opacityEffect = 0f
                     colorTint  = null
                     repeat(10) {
                         delay(50)
                         opacity = 1f - opacity
                     }
-                    //opacity = 1f
+                    opacity = 1f
                 }
                 "fire" -> {
                     effect = R.drawable.flame
