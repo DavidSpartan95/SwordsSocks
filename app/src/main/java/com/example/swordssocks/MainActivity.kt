@@ -5,19 +5,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.swordssocks.ui.theme.SwordsSocksTheme
@@ -75,6 +74,10 @@ fun Game() {
         }) {
             Text(text = "Electric")
         }
+        Button(onClick = {
+        }) {
+            Text(text = "Nothing")
+        }
     }
 
 }
@@ -89,7 +92,7 @@ fun Character(attack:Pair<Boolean,String>, num:Int) {
     var effectColor by remember { mutableStateOf(Color(255,0,0)) }
 
     LaunchedEffect(num){
-
+        //Bellow are all animation effects based on type
         if (attack.first){
             when (attack.second){
                 "normal" -> {
@@ -148,6 +151,7 @@ fun Character(attack:Pair<Boolean,String>, num:Int) {
     }
 
     Box(Modifier, Alignment.Center) {
+        //Body
         Image(
             painter = painterResource(R.drawable.asset_1),
             contentDescription = null,
@@ -156,6 +160,7 @@ fun Character(attack:Pair<Boolean,String>, num:Int) {
                 .graphicsLayer(alpha = opacity),
             colorFilter = colorTint
         )
+        //Hair
         Image(
             painter = painterResource(R.drawable.asset_2),
             contentDescription = null,
@@ -164,19 +169,16 @@ fun Character(attack:Pair<Boolean,String>, num:Int) {
                 .graphicsLayer(alpha = opacity),
             colorFilter = colorTint
         )
-
+        //Animation effect image
         Image(
             painter = painterResource(effect),
             contentDescription = null,
             modifier = Modifier
                 .size(50.dp)
                 .graphicsLayer(alpha = opacityEffect),
-            colorFilter = ColorFilter.tint(effectColor)
-        )
-
-
+            colorFilter = ColorFilter.tint(effectColor),)
     }
-    
 }
+
 
 
