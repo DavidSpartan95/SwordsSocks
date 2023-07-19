@@ -57,6 +57,7 @@ class CharacterViewModel : ViewModel(){
     private var selectNumEye = 0
     private var selectNumMouth = 0
     private var selectNumSkin = 0
+
     fun cycleHair(direction:String?){
         if (direction == "backward") {
             selectNumHair = (selectNumHair - 1 + hairStyles.size) % hairStyles.size

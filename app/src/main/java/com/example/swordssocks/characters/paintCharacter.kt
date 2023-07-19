@@ -85,7 +85,7 @@ fun AnimatableCharacter(attack:Pair<Boolean,String>, num:Int) {
     Box(Modifier, Alignment.Center) {
         //Body
         Image(
-            painter = painterResource(R.drawable.asset_1),
+            painter = painterResource(R.drawable.character_base_tan),
             contentDescription = null,
             modifier = Modifier
                 .size(200.dp)
@@ -94,7 +94,7 @@ fun AnimatableCharacter(attack:Pair<Boolean,String>, num:Int) {
         )
         //Hair
         Image(
-            painter = painterResource(R.drawable.asset_2),
+            painter = painterResource(R.drawable.character_hair_1),
             contentDescription = null,
             modifier = Modifier
                 .size(200.dp)
