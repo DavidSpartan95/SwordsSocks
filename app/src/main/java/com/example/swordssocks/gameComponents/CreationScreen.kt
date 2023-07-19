@@ -29,6 +29,10 @@ var charViewModel = CharacterViewModel()
 fun CreationScreen() {
 
     val hairColor by charViewModel.hairColor.collectAsState()
+    val hairStyle by charViewModel.hairStyle.collectAsState()
+    val eyes by charViewModel.eye.collectAsState()
+    val mouth by charViewModel.mouth.collectAsState()
+    val skin by charViewModel.skin.collectAsState()
 
     Box(Modifier.fillMaxSize(),contentAlignment = Alignment.Center) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
@@ -40,10 +44,35 @@ fun CreationScreen() {
                         {charViewModel.cycleHairColor("backward")},
                         {charViewModel.cycleHairColor("forwards")}
                     )
-                    SelectorButtons("???", {println("back")},{println("forward")})
+                    SelectorButtons(
+                        "Hair Style",
+                        {charViewModel.cycleHair("backward")},
+                        {charViewModel.cycleHair("forwards")}
+                    )
+                    SelectorButtons(
+                        "Eye",
+                        {charViewModel.cycleEyes("backward")},
+                        {charViewModel.cycleEyes("forwards")}
+                    )
+                    SelectorButtons(
+                        "Mouth",
+                        {charViewModel.cycleMouth("backward")},
+                        {charViewModel.cycleMouth("forwards")}
+                    )
+                    SelectorButtons(
+                        "Skin",
+                        {charViewModel.cycleSkin("backward")},
+                        {charViewModel.cycleSkin("forwards")}
+                    )
                 }
             }
-            CharacterBox(hairColor = ColorFilter.tint(hairColor))
+            CharacterBox(
+                hairColor = ColorFilter.tint(hairColor),
+                hairStyle = hairStyle,
+                eye = eyes,
+                mouth = mouth,
+                skin = skin
+            )
         }
     }
 }
