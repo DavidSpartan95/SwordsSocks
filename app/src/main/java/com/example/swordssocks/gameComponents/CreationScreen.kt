@@ -4,12 +4,12 @@ import android.view.MotionEvent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
@@ -19,8 +19,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,21 +31,20 @@ import com.example.swordssocks.ui.theme.SandPaper
 import com.example.swordssocks.viewModel.CharacterViewModel
 import com.example.swordssocks.R
 import com.example.swordssocks.characters.randomNameGenerator
+import com.example.swordssocks.viewModel.StatNumberViewModel
 
 var charViewModel = CharacterViewModel()
+var statViewModel = StatNumberViewModel()
 
 @Composable
 fun CreationScreen() {
     var screenSelected by remember { mutableStateOf(1) }
-
     when (screenSelected){
         1 ->{PickName({screenSelected++},{})}
-        2 ->{Customization({},{screenSelected--})}
-        3 ->{Customization({},{screenSelected--})}
+        2 ->{Customization({screenSelected++},{screenSelected--})}
+        3 ->{ StatDistribution({},{screenSelected--})}
     }
-
 }
-
 @Composable
 fun PickName(fnForward: () -> Unit,fnBack:() -> Unit) {
 
@@ -68,7 +69,7 @@ fun PickName(fnForward: () -> Unit,fnBack:() -> Unit) {
             onClick = { name = randomNameGenerator() },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(153,64,40))
         ) {
-            Text(text = "RANDOM")
+            Text(text = "RANDOM", color = Color.White)
         }
         Row(
             Modifier.width(200.dp),
@@ -131,7 +132,7 @@ fun Customization(fnForward: () -> Unit,fnBack:() -> Unit) {
                     CheckButton(image = Pair(
                         R.drawable.button_check_back,
                         R.drawable.button_check_front
-                    )){}
+                    )){fnForward.invoke()}
                     CheckButton(image = Pair(
                         R.drawable.button_cancel_back,
                         R.drawable.button_cancel_front
@@ -149,7 +150,104 @@ fun Customization(fnForward: () -> Unit,fnBack:() -> Unit) {
         }
     }
 }
+@Composable
+fun StatDistribution(fnForward: () -> Unit,fnBack:() -> Unit) {
+    val skills by statViewModel.statList.collectAsState()
+    val skillPoints by statViewModel.pointsToDistribute.collectAsState()
 
+    Column(Modifier.fillMaxWidth(),horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(verticalAlignment = Alignment.CenterVertically,) {
+            Box(
+                Modifier
+                    .heightIn(100.dp)
+                    .width(100.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .background(SandPaper)
+                    .border(
+                        width = 2.dp,
+                        color = Color.Black,
+                        shape = RoundedCornerShape(15.dp)
+                    ),
+                contentAlignment = Alignment.Center,
+            ){
+                Column(Modifier.fillMaxWidth(),horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(text = "Random", fontWeight = FontWeight.Bold)
+                    Image(
+                        painter = painterResource(id = R.drawable.six_sided_dice),
+                        contentDescription = null,
+                        Modifier
+                            .size(50.dp)
+                            .clickable { statViewModel.randomizeStats() }
+                    )
+                }
+            }
+            Box(
+                Modifier
+                    .padding(8.dp)
+                    .heightIn(100.dp)
+                    .width(200.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .background(SandPaper)
+                    .border(
+                        width = 2.dp,
+                        color = Color.Black,
+                        shape = RoundedCornerShape(15.dp)
+                    ),
+                contentAlignment = Alignment.Center,
+                ){
+                Column(Modifier.fillMaxWidth(),horizontalAlignment = Alignment.CenterHorizontally) {
+                    StatButtons(text = "Health", points = skills[0],
+                        minus = {statViewModel.changeStatValue(Pair("Health",-1))},
+                        plus = {statViewModel.changeStatValue(Pair("Health",1))})
+                    StatButtons(text = "Strength", points = skills[1],
+                        minus = {statViewModel.changeStatValue(Pair("Strength",-1))},
+                        plus = {statViewModel.changeStatValue(Pair("Strength",1))})
+                    StatButtons(text = "Crit%", points = skills[2],
+                        minus = {statViewModel.changeStatValue(Pair("Crit",-1))},
+                        plus = {statViewModel.changeStatValue(Pair("Crit",1))})
+                    StatButtons(text = "Defence", points = skills[3],
+                        minus = {statViewModel.changeStatValue(Pair("Defence",-1))},
+                        plus = {statViewModel.changeStatValue(Pair("Defence",1))})
+                    StatButtons(text = "Magic", points = skills[4],
+                        minus = {statViewModel.changeStatValue(Pair("Magic",-1))},
+                        plus = {statViewModel.changeStatValue(Pair("Magic",1))})
+                }
+            }
+            Box(
+                Modifier
+                    .heightIn(100.dp)
+                    .width(100.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .background(SandPaper)
+                    .border(
+                        width = 2.dp,
+                        color = Color.Black,
+                        shape = RoundedCornerShape(15.dp)
+                    ),
+                contentAlignment = Alignment.Center,
+            ){
+                Column(Modifier.fillMaxWidth(),horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(text = "Skill Points",fontWeight = FontWeight.Bold)
+                    Text(text = "$skillPoints", fontSize = 40.sp)
+                }
+            }
+        }
+        Row(
+            Modifier.width(200.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            CheckButton(image = Pair(
+                R.drawable.button_check_back,
+                R.drawable.button_check_front
+            )){}
+            CheckButton(image = Pair(
+                R.drawable.button_cancel_back,
+                R.drawable.button_cancel_front
+            )){fnBack.invoke()}
+
+        }
+    }
+}
 @Composable
 fun AppearanceSelectorBox(content: @Composable () -> Unit) {
     Box(
@@ -171,7 +269,6 @@ fun AppearanceSelectorBox(content: @Composable () -> Unit) {
         }
     }
 }
-
 @Composable
 fun SelectorButtons(text:String, ArrowBack:()-> Unit,ArrowForward:()-> Unit) {
     Row(
@@ -182,9 +279,30 @@ fun SelectorButtons(text:String, ArrowBack:()-> Unit,ArrowForward:()-> Unit) {
         IconButton(onClick = { ArrowBack.invoke() }) {
             Icon(Icons.Default.ArrowBack, contentDescription = "Back")
         }
-        Text(text = text)
+        Text(text = text, fontWeight = FontWeight.Bold)
         IconButton(onClick = { ArrowForward.invoke() }) {
             Icon(Icons.Default.ArrowForward, contentDescription = "Back")
+        }
+    }
+}
+
+@Composable
+fun StatButtons(text:String,points:Int ,minus:()-> Unit,plus:()-> Unit) {
+    Row(
+        Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row() {
+            Text(text = text,fontWeight = FontWeight.Bold,modifier = Modifier.padding(start = 8.dp))
+        }
+        Row(horizontalArrangement = Arrangement.Center,verticalAlignment = Alignment.CenterVertically,) {
+            IconButton(onClick = { minus.invoke() }) {
+                Image(painter = painterResource(id = R.drawable.remove_circle), contentDescription = null)
+            }
+            Text(text = "$points", color = Color.White, fontWeight = FontWeight.Bold)
+            IconButton(onClick = { plus.invoke() }) {
+                Icon(Icons.Default.AddCircle, contentDescription = "Back")            }
         }
     }
 }
