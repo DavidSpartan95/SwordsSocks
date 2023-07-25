@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import com.example.swordssocks.R
+import com.example.swordssocks.game_components.charViewModel
 
 class CharacterViewModel : ViewModel(){
     private val _hairColor = MutableStateFlow<Color>(Color(83,41,14))
@@ -58,6 +59,15 @@ class CharacterViewModel : ViewModel(){
     private var selectNumMouth = 0
     private var selectNumSkin = 0
 
+    fun cycleParts(part:String,direction:String){
+        when(part){
+            "Hair Color" -> charViewModel.cycleHairColor(direction)
+            "Hair Style" -> charViewModel.cycleHair(direction)
+            "Eye" -> charViewModel.cycleEyes(direction)
+            "Mouth" -> charViewModel.cycleMouth(direction)
+            "Skin" -> charViewModel.cycleSkin(direction)
+        }
+    }
     fun cycleHair(direction:String?){
         if (direction == "backward") {
             selectNumHair = (selectNumHair - 1 + hairStyles.size) % hairStyles.size
@@ -97,5 +107,13 @@ class CharacterViewModel : ViewModel(){
             selectNumSkin = (selectNumSkin + 1) % skins.size
         }
         _skin.value = skins[selectNumSkin]
+    }
+
+    fun reset(){
+        _hairStyle.value = hairStyles[0]
+        _hairColor.value = colors[0]
+        _eye.value = eyes[0]
+        _skin.value = skins[0]
+        _mouth.value = mouths[0]
     }
 }

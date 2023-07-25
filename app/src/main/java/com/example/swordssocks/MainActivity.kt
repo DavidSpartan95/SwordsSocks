@@ -1,29 +1,33 @@
 package com.example.swordssocks
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import com.example.swordssocks.gameComponents.CreationScreen
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.swordssocks.database.*
+import com.example.swordssocks.game_components.CreationScreen
+import com.example.swordssocks.game_components.MenuScreen
+import com.example.swordssocks.gladiator_items.Potion
+import com.example.swordssocks.gladiator_items.smallPotion
+import com.example.swordssocks.nav_graph.SetupNavGraph
+
 import com.example.swordssocks.ui.theme.SandColor
 import com.example.swordssocks.ui.theme.SwordsSocksTheme
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onResume() {
@@ -36,7 +40,10 @@ class MainActivity : ComponentActivity() {
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
     }
     override fun onCreate(savedInstanceState: Bundle?) {
+        lateinit var navController: NavHostController
         super.onCreate(savedInstanceState)
+        val db = AppDatabase.getInstance(applicationContext)
+        val userRepository = UserRepository(db, lifecycleScope)
         setContent {
             SwordsSocksTheme {
                 // A surface container using the 'background' color from the theme
@@ -44,16 +51,18 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = SandColor
                 ) {
-                    Game()
+                    val context = LocalContext.current
+
+
+                    navController = rememberNavController()
+                    SetupNavGraph(
+                        navController = navController,
+                        userRepository = userRepository
+                    )
                 }
             }
         }
     }
-}
-
-@Composable
-fun Game() {
-    CreationScreen()
 }
 
 

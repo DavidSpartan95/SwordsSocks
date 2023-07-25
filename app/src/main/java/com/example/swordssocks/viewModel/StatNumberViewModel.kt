@@ -7,14 +7,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlin.random.Random
 
 class StatNumberViewModel: ViewModel() {
-    //Index 0 = HP, 1 = Strength, 2 = Crit, 3 = Defence, 4 = Magic
+    //Index 0 = HP, 1 = Strength, 2 = Charisma, 3 = Defence, 4 = Magic
     private val _statList = MutableStateFlow(arrayListOf(1,1,1,1,1))
     val statList: StateFlow<ArrayList<Int>> get() = _statList
 
     private val _pointsToDistribute = MutableStateFlow(28)
     val pointsToDistribute: StateFlow<Int> get() = _pointsToDistribute
 
-    private val statIndexMap = mapOf("Health" to 0, "Strength" to 1, "Crit" to 2, "Defence" to 3, "Magic" to 4)
+    private val statIndexMap = mapOf("Health" to 0, "Strength" to 1, "Charisma" to 2, "Defence" to 3, "Magic" to 4)
 
     fun changeStatValue(info: Pair<String, Int>) {
         if (_pointsToDistribute.value != 0 || info.second <= 0) {
@@ -36,8 +36,11 @@ class StatNumberViewModel: ViewModel() {
             _pointsToDistribute.value--
             stats[rng] = stats[rng]+1
         }
-        println(stats)
         _statList.value = stats
-        println(_statList.value)
     }
+    fun reset(){
+        _pointsToDistribute.value = 28
+        _statList.value = arrayListOf(1,1,1,1,1)
+    }
+
 }

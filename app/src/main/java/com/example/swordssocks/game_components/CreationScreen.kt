@@ -1,4 +1,4 @@
-package com.example.swordssocks.gameComponents
+package com.example.swordssocks.game_components
 
 import android.view.MotionEvent
 import androidx.compose.foundation.Image
@@ -19,43 +19,106 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.swordssocks.characters.CharacterBox
 import com.example.swordssocks.ui.theme.SandPaper
 import com.example.swordssocks.viewModel.CharacterViewModel
 import com.example.swordssocks.R
 import com.example.swordssocks.characters.randomNameGenerator
+import com.example.swordssocks.database.*
+import com.example.swordssocks.gladiator_items.Potion
+import com.example.swordssocks.gladiator_items.smallPotion
+import com.example.swordssocks.nav_graph.Screen
+import com.example.swordssocks.viewModel.NameViewModel
 import com.example.swordssocks.viewModel.StatNumberViewModel
 
 var charViewModel = CharacterViewModel()
 var statViewModel = StatNumberViewModel()
-
+var nameViewModel = NameViewModel()
 @Composable
-fun CreationScreen() {
+fun CreationScreen(
+    navController: NavHostController,
+    userRepository: UserRepository
+) {
     var screenSelected by remember { mutableStateOf(1) }
+    val stats by statViewModel.statList.collectAsState()
+    LaunchedEffect(false){
+        nameViewModel.setName(randomNameGenerator())
+        statViewModel.reset()
+        charViewModel.reset()
+    }
+
     when (screenSelected){
-        1 ->{PickName({screenSelected++},{})}
+        1 ->{
+            PickName(
+            {screenSelected++},
+                {
+                    navController.navigate(route = "home_screen"){
+                        popUpTo(Screen.Creation.route){
+                            inclusive = true
+                        }}
+                }
+            )
+        }
         2 ->{Customization({screenSelected++},{screenSelected--})}
-        3 ->{ StatDistribution({},{screenSelected--})}
+        3 ->{ StatDistribution({
+            addUser(
+                userRepository,
+                user =
+                    User(
+                        name = nameViewModel.name.value,
+                        stats[0],
+                        stats[1],
+                        stats[2],
+                        stats[3],
+                        stats[4],
+                        100,
+                        0,
+                        1,
+                        DrawInstruction(
+                            hair = charViewModel.hairStyle.value,
+                            hairColor = charViewModel.hairColor.value,
+                            eyes = charViewModel.eye.value,
+                            mouth = charViewModel.mouth.value,
+                            skin = charViewModel.skin.value
+                        ),
+                        Inventory(
+                            potions = arrayListOf(smallPotion),
+                            meleeWeapons = arrayListOf(),
+                            magicWeapons = arrayListOf(),
+                            armors = arrayListOf()
+                        )
+                    )
+            )
+            navController.navigate(route = "home_screen"){
+                popUpTo(Screen.Creation.route){
+                    inclusive = true
+                }
+            }
+        },{screenSelected--})}
     }
 }
 @Composable
 fun PickName(fnForward: () -> Unit,fnBack:() -> Unit) {
+    //TODO change this to a viewModel
+    val name by nameViewModel.name.collectAsState()
 
-    var name by remember {mutableStateOf(randomNameGenerator())}
+    LaunchedEffect(false){
+
+    }
 
     Column(Modifier.fillMaxWidth(),horizontalAlignment = Alignment.CenterHorizontally) {
         
         Text(text = "What is your name?", fontSize = 24.sp)
         TextField(
             value = name,
-            onValueChange = {name = it},
+            onValueChange = {nameViewModel.setName(it)},
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center,fontSize = 24.sp),
             colors = TextFieldDefaults.textFieldColors(
                 disabledTextColor = Color.Transparent,
@@ -66,7 +129,7 @@ fun PickName(fnForward: () -> Unit,fnBack:() -> Unit) {
         )
         //Random Generator Button
         Button(
-            onClick = { name = randomNameGenerator() },
+            onClick = { nameViewModel.setName(randomNameGenerator()) },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(153,64,40))
         ) {
             Text(text = "RANDOM", color = Color.White)
@@ -82,7 +145,7 @@ fun PickName(fnForward: () -> Unit,fnBack:() -> Unit) {
             CheckButton(image = Pair(
                 R.drawable.button_cancel_back,
                 R.drawable.button_cancel_front
-            )){}
+            )){fnBack.invoke()}
         }
     }
 }
@@ -94,36 +157,19 @@ fun Customization(fnForward: () -> Unit,fnBack:() -> Unit) {
     val mouth by charViewModel.mouth.collectAsState()
     val skin by charViewModel.skin.collectAsState()
 
-    Box(Modifier.fillMaxSize(),contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize(),contentAlignment = Center) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
             Column() {
                 AppearanceSelectorBox {
 
-                    SelectorButtons(
-                        "Hair Color",
-                        {charViewModel.cycleHairColor("backward")},
-                        {charViewModel.cycleHairColor("forwards")}
-                    )
-                    SelectorButtons(
-                        "Hair Style",
-                        {charViewModel.cycleHair("backward")},
-                        {charViewModel.cycleHair("forwards")}
-                    )
-                    SelectorButtons(
-                        "Eye",
-                        {charViewModel.cycleEyes("backward")},
-                        {charViewModel.cycleEyes("forwards")}
-                    )
-                    SelectorButtons(
-                        "Mouth",
-                        {charViewModel.cycleMouth("backward")},
-                        {charViewModel.cycleMouth("forwards")}
-                    )
-                    SelectorButtons(
-                        "Skin",
-                        {charViewModel.cycleSkin("backward")},
-                        {charViewModel.cycleSkin("forwards")}
-                    )
+                    val buttonNames = arrayOf("Hair Color","Hair Style","Eye","Mouth","Skin")
+                    for (x in buttonNames){
+                        SelectorButtons(
+                            text = x,
+                            ArrowBack = {charViewModel.cycleParts(x,"backward")},
+                            ArrowForward = {charViewModel.cycleParts(x,"forward")}
+                        )
+                    }
                 }
                 Row(
                     Modifier.width(200.dp),
@@ -137,7 +183,6 @@ fun Customization(fnForward: () -> Unit,fnBack:() -> Unit) {
                         R.drawable.button_cancel_back,
                         R.drawable.button_cancel_front
                     )){fnBack.invoke()}
-
                 }
             }
             CharacterBox(
@@ -193,24 +238,19 @@ fun StatDistribution(fnForward: () -> Unit,fnBack:() -> Unit) {
                         color = Color.Black,
                         shape = RoundedCornerShape(15.dp)
                     ),
-                contentAlignment = Alignment.Center,
+                contentAlignment = Center,
                 ){
                 Column(Modifier.fillMaxWidth(),horizontalAlignment = Alignment.CenterHorizontally) {
-                    StatButtons(text = "Health", points = skills[0],
-                        minus = {statViewModel.changeStatValue(Pair("Health",-1))},
-                        plus = {statViewModel.changeStatValue(Pair("Health",1))})
-                    StatButtons(text = "Strength", points = skills[1],
-                        minus = {statViewModel.changeStatValue(Pair("Strength",-1))},
-                        plus = {statViewModel.changeStatValue(Pair("Strength",1))})
-                    StatButtons(text = "Crit%", points = skills[2],
-                        minus = {statViewModel.changeStatValue(Pair("Crit",-1))},
-                        plus = {statViewModel.changeStatValue(Pair("Crit",1))})
-                    StatButtons(text = "Defence", points = skills[3],
-                        minus = {statViewModel.changeStatValue(Pair("Defence",-1))},
-                        plus = {statViewModel.changeStatValue(Pair("Defence",1))})
-                    StatButtons(text = "Magic", points = skills[4],
-                        minus = {statViewModel.changeStatValue(Pair("Magic",-1))},
-                        plus = {statViewModel.changeStatValue(Pair("Magic",1))})
+                    val statButtonNames = arrayOf("Health","Strength","Charisma","Defence","Magic")
+
+                    statButtonNames.forEachIndexed { index, name ->
+                        StatButtons(
+                            text = name,
+                            points = skills[index],
+                            minus = {statViewModel.changeStatValue(Pair(name,-1))},
+                            plus = {statViewModel.changeStatValue(Pair(name,1))}
+                        )
+                    }
                 }
             }
             Box(
@@ -239,7 +279,7 @@ fun StatDistribution(fnForward: () -> Unit,fnBack:() -> Unit) {
             CheckButton(image = Pair(
                 R.drawable.button_check_back,
                 R.drawable.button_check_front
-            )){}
+            )){fnForward.invoke()}
             CheckButton(image = Pair(
                 R.drawable.button_cancel_back,
                 R.drawable.button_cancel_front
@@ -261,10 +301,13 @@ fun AppearanceSelectorBox(content: @Composable () -> Unit) {
                 color = Color.Black,
                 shape = RoundedCornerShape(15.dp)
             ),
-        contentAlignment = Alignment.Center,
+        contentAlignment = Center,
 
     ) {
-        Column(Modifier.fillMaxWidth(),horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             content()
         }
     }

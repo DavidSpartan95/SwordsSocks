@@ -1,4 +1,4 @@
-package com.example.swordssocks.gameComponents
+package com.example.swordssocks.game_components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
