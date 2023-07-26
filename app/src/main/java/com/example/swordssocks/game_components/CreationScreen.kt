@@ -30,6 +30,7 @@ import com.example.swordssocks.characters.CharacterBox
 import com.example.swordssocks.ui.theme.SandPaper
 import com.example.swordssocks.viewModel.CharacterViewModel
 import com.example.swordssocks.R
+import com.example.swordssocks.characters.containsOnlyAlphabets
 import com.example.swordssocks.characters.randomNameGenerator
 import com.example.swordssocks.database.*
 import com.example.swordssocks.gladiator_items.Potion
@@ -118,7 +119,11 @@ fun PickName(fnForward: () -> Unit,fnBack:() -> Unit) {
         Text(text = "What is your name?", fontSize = 24.sp)
         TextField(
             value = name,
-            onValueChange = {nameViewModel.setName(it)},
+            onValueChange = {
+                if(it.length <= 12&&containsOnlyAlphabets(it)){
+                    nameViewModel.setName(it)
+                }
+            },
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center,fontSize = 24.sp),
             colors = TextFieldDefaults.textFieldColors(
                 disabledTextColor = Color.Transparent,

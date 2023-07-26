@@ -49,6 +49,7 @@ android {
 }
 
 dependencies {
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.27.0"
     //https://jsoup.org/
     implementation 'org.jsoup:jsoup:1.16.1'
     //room database

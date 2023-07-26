@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -42,9 +43,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         lateinit var navController: NavHostController
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         val db = AppDatabase.getInstance(applicationContext)
         val userRepository = UserRepository(db, lifecycleScope)
         setContent {
+
             SwordsSocksTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(

@@ -1,7 +1,14 @@
 package com.example.swordssocks.characters
 
 import kotlin.random.Random
-
+fun containsOnlyAlphabets(input: String): Boolean {
+    if (input.isEmpty()){
+        return true
+    }else{
+        val regex = Regex("^[a-zA-Z0-9]+$")
+        return input.matches(regex)
+    }
+}
 fun randomNameGenerator():String{
     val randomIndex = Random.nextInt(50)
     return  maleNames[randomIndex]
