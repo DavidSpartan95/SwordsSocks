@@ -1,5 +1,7 @@
 package com.example.swordssocks.game_components
 
+import android.util.Log
+import android.view.KeyEvent
 import android.view.MotionEvent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -7,6 +9,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -17,11 +21,15 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,7 +76,7 @@ fun CreationScreen(
             )
         }
         2 ->{Customization({screenSelected++},{screenSelected--})}
-        3 ->{ StatDistribution({
+        3 ->{StatDistribution({
             addUser(
                 userRepository,
                 user =
@@ -105,18 +113,17 @@ fun CreationScreen(
         },{screenSelected--})}
     }
 }
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun PickName(fnForward: () -> Unit,fnBack:() -> Unit) {
-    //TODO change this to a viewModel
+
     val name by nameViewModel.name.collectAsState()
-
-    LaunchedEffect(false){
-
-    }
 
     Column(Modifier.fillMaxWidth(),horizontalAlignment = Alignment.CenterHorizontally) {
         
         Text(text = "What is your name?", fontSize = 24.sp)
+
+        Log.d("TAG","ENTER PRESS")
         TextField(
             value = name,
             onValueChange = {
@@ -130,7 +137,13 @@ fun PickName(fnForward: () -> Unit,fnBack:() -> Unit) {
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
-            )
+            ),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = { fnForward.invoke() }
+            ),
+
         )
         //Random Generator Button
         Button(
