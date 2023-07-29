@@ -2,12 +2,17 @@ package com.example.swordssocks.nav_graph
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.example.swordssocks.database.User
 import com.example.swordssocks.database.UserRepository
 import com.example.swordssocks.game_components.CreationScreen
 import com.example.swordssocks.game_components.LoadGameScreen
 import com.example.swordssocks.game_components.MenuScreen
+import com.example.swordssocks.game_components.TownScreen
+import com.google.gson.Gson
 
 @Composable
 fun SetupNavGraph(
@@ -32,6 +37,19 @@ fun SetupNavGraph(
             route = Screen.Load.route
         ) {
             LoadGameScreen(navController,userRepository)
+        }
+        composable(
+            route = Screen.Town.route,
+            arguments = listOf(navArgument("user"){
+                type = NavType.StringType
+            })
+        ) {backStackEntry ->
+            backStackEntry.arguments?.getString("user")?.let {
+                json ->
+                val user = Gson().fromJson(json, User::class.java)
+                TownScreen(navController,userRepository,user)
+            }
+
         }
     }
 }

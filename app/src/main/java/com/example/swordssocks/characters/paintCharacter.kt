@@ -113,22 +113,22 @@ fun AnimatableCharacter(attack:Pair<Boolean,String>, num:Int) {
 }
 
 @Composable
-fun CharacterBox(hairColor: ColorFilter?, hairStyle:Int,eye:Int,mouth:Int,skin:Int) {
-    val size = 300.dp
+fun CharacterBox(hairColor: ColorFilter?, hairStyle:Int,eye:Int,mouth:Int,skin:Int, size:Int) {
+    val sizeDP = size.dp
     Box(Modifier, Alignment.Center) {
         //Skin
         Image(
             painter = painterResource(skin),
             contentDescription = null,
             modifier = Modifier
-                .size(size),
+                .size(sizeDP),
         )
         //Hair
         Image(
             painter = painterResource(hairStyle),
             contentDescription = null,
             modifier = Modifier
-                .size(size),
+                .size(sizeDP),
             colorFilter = hairColor
         )
         //eyes
@@ -136,14 +136,14 @@ fun CharacterBox(hairColor: ColorFilter?, hairStyle:Int,eye:Int,mouth:Int,skin:I
             painter = painterResource(eye),
             contentDescription = null,
             modifier = Modifier
-                .size(size),
+                .size(sizeDP),
         )
         //mouth
         Image(
             painter = painterResource(mouth),
             contentDescription = null,
             modifier = Modifier
-                .size(size),
+                .size(sizeDP),
         )
     }
 }

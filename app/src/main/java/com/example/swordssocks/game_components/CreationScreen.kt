@@ -46,6 +46,7 @@ import com.example.swordssocks.gladiator_items.smallPotion
 import com.example.swordssocks.nav_graph.Screen
 import com.example.swordssocks.viewModel.NameViewModel
 import com.example.swordssocks.viewModel.StatNumberViewModel
+import com.google.gson.Gson
 
 var charViewModel = CharacterViewModel()
 var statViewModel = StatNumberViewModel()
@@ -77,35 +78,37 @@ fun CreationScreen(
         }
         2 ->{Customization({screenSelected++},{screenSelected--})}
         3 ->{StatDistribution({
+            val newUser = User(
+                name = nameViewModel.name.value,
+                stats[0],
+                stats[1],
+                stats[2],
+                stats[3],
+                stats[4],
+                100,
+                0,
+                1,
+                DrawInstruction(
+                    hair = charViewModel.hairStyle.value,
+                    hairColor = charViewModel.hairColor.value,
+                    eyes = charViewModel.eye.value,
+                    mouth = charViewModel.mouth.value,
+                    skin = charViewModel.skin.value
+                ),
+                Inventory(
+                    potions = arrayListOf(smallPotion),
+                    meleeWeapons = arrayListOf(),
+                    magicWeapons = arrayListOf(),
+                    armors = arrayListOf()
+                )
+            )
             addUser(
                 userRepository,
-                user =
-                    User(
-                        name = nameViewModel.name.value,
-                        stats[0],
-                        stats[1],
-                        stats[2],
-                        stats[3],
-                        stats[4],
-                        100,
-                        0,
-                        1,
-                        DrawInstruction(
-                            hair = charViewModel.hairStyle.value,
-                            hairColor = charViewModel.hairColor.value,
-                            eyes = charViewModel.eye.value,
-                            mouth = charViewModel.mouth.value,
-                            skin = charViewModel.skin.value
-                        ),
-                        Inventory(
-                            potions = arrayListOf(smallPotion),
-                            meleeWeapons = arrayListOf(),
-                            magicWeapons = arrayListOf(),
-                            armors = arrayListOf()
-                        )
-                    )
+                user = newUser
+
             )
-            navController.navigate(route = "home_screen"){
+            val userJson = Gson().toJson(newUser)
+            navController.navigate(route = "town_screen/$userJson"){
                 popUpTo(Screen.Creation.route){
                     inclusive = true
                 }
@@ -208,7 +211,8 @@ fun Customization(fnForward: () -> Unit,fnBack:() -> Unit) {
                 hairStyle = hairStyle,
                 eye = eyes,
                 mouth = mouth,
-                skin = skin
+                skin = skin,
+                size = 300
             )
         }
     }

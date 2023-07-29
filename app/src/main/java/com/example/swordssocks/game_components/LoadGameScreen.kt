@@ -16,6 +16,7 @@ import com.example.swordssocks.database.UserRepository
 import com.example.swordssocks.database.retrieveAllUsers
 import com.example.swordssocks.nav_graph.Screen
 import com.example.swordssocks.ui.theme.DarkOrange
+import com.google.gson.Gson
 import kotlinx.coroutines.withContext
 
 @Composable
@@ -45,7 +46,14 @@ fun LoadGameScreen(
         }
         saveFiles?.let{
             for (x in saveFiles!!){
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = {
+                    val userJson = Gson().toJson(x)
+                    navController.navigate(route = "town_screen/$userJson"){
+                        popUpTo(Screen.Load.route){
+                            inclusive = true
+                        }
+                    }
+                }) {
                     Text(text = "${x.name} level: ${x.level}")
                 }
             }
