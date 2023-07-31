@@ -71,6 +71,5 @@ fun LoadGameScreen(
                 }
             }
         }
-
     }
 }

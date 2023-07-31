@@ -145,5 +145,19 @@ fun CharacterBox(hairColor: ColorFilter?, hairStyle:Int,eye:Int,mouth:Int,skin:I
             modifier = Modifier
                 .size(sizeDP),
         )
+        //socks
+        /*Image(
+            painter = painterResource(R.drawable.character_socks_3),
+            contentDescription = null,
+            modifier = Modifier
+                .size(sizeDP),
+        )*/
+        //Sandals
+        Image(
+            painter = painterResource(R.drawable.character_sandals_1),
+            contentDescription = null,
+            modifier = Modifier
+                .size(sizeDP),
+        )
     }
 }

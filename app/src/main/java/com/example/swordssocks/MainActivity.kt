@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,21 +32,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-    override fun onResume() {
-        super.onResume()
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
-    }
 
-    override fun onStart() {
-        super.onStart()
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         lateinit var navController: NavHostController
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         val db = AppDatabase.getInstance(applicationContext)
         val userRepository = UserRepository(db, lifecycleScope)
+
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
         setContent {
 
             SwordsSocksTheme {
@@ -55,8 +53,7 @@ class MainActivity : ComponentActivity() {
                     color = SandColor
                 ) {
                     val context = LocalContext.current
-
-
+                    
                     navController = rememberNavController()
                     SetupNavGraph(
                         navController = navController,
