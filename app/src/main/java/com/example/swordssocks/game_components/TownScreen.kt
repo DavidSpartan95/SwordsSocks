@@ -18,6 +18,7 @@ import com.example.swordssocks.characters.CharacterBox
 import com.example.swordssocks.database.User
 import com.example.swordssocks.database.UserRepository
 import com.example.swordssocks.nav_graph.Screen
+import com.google.gson.Gson
 
 @Composable
 fun TownScreen(
@@ -56,6 +57,8 @@ fun TownScreen(
                     mouth = user.draw.mouth,
                     skin = user.draw.skin,
                     size = 150,
+                    opacity = 1.0F,
+                    colorTint = null
                 )
             }
         }
@@ -64,7 +67,11 @@ fun TownScreen(
         Box(Modifier.align(Alignment.TopCenter)) {
             Row() {
                 CircleButton(picture = R.drawable.button_check_back, text = "Battle"){
-
+                    val userJson = Gson().toJson(user)
+                    navController.navigate(route = "arena_screen/$userJson"){
+                        popUpTo(Screen.Arena.route){
+                            inclusive = true
+                        }}
                 }
                 CircleButton(picture = R.drawable.button_cancel_back, text = "Exit"){
                     navController.navigate(route = "home_screen"){

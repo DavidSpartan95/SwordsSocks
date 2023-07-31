@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import com.example.swordssocks.R
+import com.example.swordssocks.characters.*
 import com.example.swordssocks.game_components.charViewModel
 
 class CharacterViewModel : ViewModel(){
@@ -23,36 +24,7 @@ class CharacterViewModel : ViewModel(){
     private val _skin = MutableStateFlow<Int>(R.drawable.character_base_tan)
     val skin: StateFlow<Int> get() = _skin
 
-    //Hair colors in stored in an array
-    private val colors = arrayOf(
-        Color(83,41,14),
-        Color(179,35,23),
-        Color(179,139,103),
-        Color(0, 126, 180),
-        Color(56,81,61),
-        Color(31, 22, 12)
-    )
-    //Hair styles stored in an array
-    private val hairStyles = arrayOf(
-        R.drawable.character_hair_1,
-        R.drawable.character_hair_2,
-        R.drawable.character_hair_3,
-    )
-    private val eyes = arrayOf(
-        R.drawable.character_eyes_1,
-        R.drawable.character_eyes_2,
-        R.drawable.character_eyes_3,
-    )
-    private val mouths = arrayOf(
-        R.drawable.character_mouth_1,
-        R.drawable.character_mouth_2,
-        R.drawable.character_mouth_3,
-    )
-    private val skins = arrayOf(
-        R.drawable.character_base_tan,
-        R.drawable.character_base_lightskin,
-        R.drawable.character_base_black,
-    )
+
     private var selectNumHair = 0
     private var selectNumHairColor = 0
     private var selectNumEye = 0

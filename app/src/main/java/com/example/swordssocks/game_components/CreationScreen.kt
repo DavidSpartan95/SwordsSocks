@@ -212,7 +212,9 @@ fun Customization(fnForward: () -> Unit,fnBack:() -> Unit) {
                 eye = eyes,
                 mouth = mouth,
                 skin = skin,
-                size = 300
+                size = 300,
+                opacity = 1.0F,
+                colorTint = null
             )
         }
     }

@@ -8,17 +8,18 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.swordssocks.characters.AnimatableCharacter
+import com.example.swordssocks.database.User
+import com.example.swordssocks.ui.theme.HitCharacterAnimation
 
 
 @Composable
-fun AnimationTest() {
+fun AnimationTest(user: User) {
     Column(Modifier.fillMaxWidth(), Arrangement.Top, Alignment.CenterHorizontally) {
 
         var attack by remember { mutableStateOf(Pair(false,"normal")) }
         var attNum by remember { mutableStateOf(0) }
 
-        AnimatableCharacter(attack,attNum)
+        HitCharacterAnimation(attack,attNum,user)
 
         Button(onClick = {
             attack = Pair(true,"normal")
