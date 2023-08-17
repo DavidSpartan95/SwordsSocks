@@ -17,16 +17,20 @@ import com.example.swordssocks.R
 import com.example.swordssocks.characters.CharacterBox
 import com.example.swordssocks.database.User
 import com.example.swordssocks.database.UserRepository
+import com.example.swordssocks.gladiator_items.dagger
+import com.example.swordssocks.gladiator_items.woodSword
 import com.example.swordssocks.nav_graph.Screen
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun TownScreen(
     navController: NavHostController,
     userRepository: UserRepository,
-    user: User,
+    userEnter: User,
 ) {
     val scrollState = rememberScrollState(239)
+    var user = userEnter
 
     Column(
         Modifier.horizontalScroll(state = scrollState),

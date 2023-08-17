@@ -24,4 +24,7 @@ class MeleeWeapon(
     }
 }
 
+val dagger = MeleeWeapon("dagger", 10,95,"normal",12)
+val woodSword = MeleeWeapon("woodSword", 20,95,"normal",12)
+
 

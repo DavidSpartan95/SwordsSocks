@@ -126,7 +126,6 @@ fun PickName(fnForward: () -> Unit,fnBack:() -> Unit) {
         
         Text(text = "What is your name?", fontSize = 24.sp)
 
-        Log.d("TAG","ENTER PRESS")
         TextField(
             value = name,
             onValueChange = {
