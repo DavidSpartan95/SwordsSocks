@@ -13,6 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import com.example.swordssocks.R
+import com.example.swordssocks.database.User
 
 
 @Composable
@@ -71,11 +72,86 @@ fun CharacterBox(
         )*/
         //Sandals
         Image(
-            painter = painterResource(R.drawable.character_sandals_1),
+            painter = painterResource(R.drawable.character_sandals_2),
             contentDescription = null,
             modifier = Modifier
                 .size(sizeDP).graphicsLayer(alpha = opacity),
             colorFilter = colorTint,
         )
+        //Weapon
+        Image(
+            painter = painterResource(R.drawable.sword_wood_equipped),
+            contentDescription = null,
+            modifier = Modifier
+                .size(sizeDP).graphicsLayer(alpha = opacity),
+            colorFilter = colorTint,
+        )
+    }
+}
+
+@Composable
+fun CharacterDisplay(
+    user: User,
+    hairColor: ColorFilter?,
+    size:Int,
+    opacity:Float,
+    colorTint:ColorFilter?
+) {
+    val sizeDP = size.dp
+    Box(Modifier, Alignment.Center) {
+        //Skin
+        Image(
+            painter = painterResource(user.draw.skin),
+            contentDescription = null,
+            modifier = Modifier
+                .size(sizeDP)
+                .graphicsLayer(alpha = opacity),
+            colorFilter = colorTint,
+        )
+        //Hair
+        Image(
+            painter = painterResource(user.draw.hair),
+            contentDescription = null,
+            modifier = Modifier
+                .size(sizeDP)
+                .graphicsLayer(alpha = opacity),
+            colorFilter = hairColor
+        )
+        //eyes
+        Image(
+            painter = painterResource(user.draw.eyes),
+            contentDescription = null,
+            modifier = Modifier
+                .size(sizeDP).graphicsLayer(alpha = opacity),
+            colorFilter = colorTint,
+        )
+        //mouth
+        Image(
+            painter = painterResource(user.draw.mouth),
+            contentDescription = null,
+            modifier = Modifier
+                .size(sizeDP).graphicsLayer(alpha = opacity),
+            colorFilter = colorTint,
+        )
+        //Sandals
+        if (user.inventory.armors.isNotEmpty()){
+            Image(
+                painter = painterResource(user.inventory.armors[0].display),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(sizeDP).graphicsLayer(alpha = opacity),
+                colorFilter = colorTint,
+            )
+        }
+        //Weapon
+        if (user.inventory.meleeWeapons.isNotEmpty()){
+            Image(
+                painter = painterResource(user.inventory.meleeWeapons[0].display),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(sizeDP).graphicsLayer(alpha = opacity),
+                colorFilter = colorTint,
+            )
+        }
     }
 }

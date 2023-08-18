@@ -1,12 +1,9 @@
 package com.example.swordssocks.game_components
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -15,13 +12,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.swordssocks.R
 import com.example.swordssocks.characters.CharacterBox
+import com.example.swordssocks.characters.CharacterDisplay
 import com.example.swordssocks.database.User
 import com.example.swordssocks.database.UserRepository
-import com.example.swordssocks.gladiator_items.dagger
-import com.example.swordssocks.gladiator_items.woodSword
+import com.example.swordssocks.database.getUserByID
 import com.example.swordssocks.nav_graph.Screen
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
+
+
 
 @Composable
 fun TownScreen(
@@ -29,14 +27,25 @@ fun TownScreen(
     userRepository: UserRepository,
     userEnter: User,
 ) {
+    var weaponShop by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState(239)
     var user = userEnter
+    LaunchedEffect(weaponShop){
+        user = getUserByID(userRepository,user.id)
+    }
 
     Column(
         Modifier.horizontalScroll(state = scrollState),
     ) {
         //This box paints the Town
         Box() {
+            if (weaponShop){
+                Box(Modifier.align(Alignment.Center)) {
+                    WeaponPopup(userRepository){
+                        weaponShop = false
+                    }
+                }
+            }
             Image(
                 painter = painterResource(id = R.drawable.village_backdrop_temp),
                 contentDescription = null
@@ -54,12 +63,9 @@ fun TownScreen(
                 contentDescription = null
             )
             Box(modifier = Modifier.align(Alignment.BottomCenter)) {
-                CharacterBox(
+                CharacterDisplay(
                     hairColor = ColorFilter.tint(user.draw.hairColor),
-                    hairStyle = user.draw.hair,
-                    eye = user.draw.eyes,
-                    mouth = user.draw.mouth,
-                    skin = user.draw.skin,
+                    user = user,
                     size = 150,
                     opacity = 1.0F,
                     colorTint = null
@@ -67,21 +73,28 @@ fun TownScreen(
             }
         }
     }
-    Box(Modifier.fillMaxSize()) {
-        Box(Modifier.align(Alignment.TopCenter)) {
-            Row() {
-                CircleButton(picture = R.drawable.button_check_back, text = "Battle"){
-                    val userJson = Gson().toJson(user)
-                    navController.navigate(route = "arena_screen/$userJson"){
-                        popUpTo(Screen.Arena.route){
-                            inclusive = true
-                        }}
-                }
-                CircleButton(picture = R.drawable.button_cancel_back, text = "Exit"){
-                    navController.navigate(route = "home_screen"){
-                        popUpTo(Screen.Town.route){
-                            inclusive = true
-                        }}
+    if(!weaponShop){
+        Box(Modifier.fillMaxSize()) {
+
+            Box(Modifier.align(Alignment.TopCenter)) {
+
+                Row() {
+                    CircleButton(picture = R.drawable.button_check_back, text = "Battle"){
+                        val userJson = Gson().toJson(user)
+                        navController.navigate(route = "arena_screen/$userJson"){
+                            popUpTo(Screen.Arena.route){
+                                inclusive = true
+                            }}
+                    }
+                    CircleButton(picture = R.drawable.button_cancel_back, text = "Exit"){
+                        navController.navigate(route = "home_screen"){
+                            popUpTo(Screen.Town.route){
+                                inclusive = true
+                            }}
+                    }
+                    CircleButton(picture = R.drawable.button_cancel_back, text = "Shop"){
+                        weaponShop = true
+                    }
                 }
             }
         }
@@ -94,9 +107,11 @@ fun CircleButton(picture:Int,text: String, onClick: ()-> Unit) {
         Image(
             painter = painterResource(id = picture),
             contentDescription = null,
-            Modifier.size(100.dp).clickable {
-                onClick.invoke()
-            }
+            Modifier
+                .size(100.dp)
+                .clickable {
+                    onClick.invoke()
+                }
         )
         Text(text = text)
     }

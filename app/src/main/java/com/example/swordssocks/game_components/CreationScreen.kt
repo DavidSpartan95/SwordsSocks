@@ -158,11 +158,15 @@ fun PickName(fnForward: () -> Unit,fnBack:() -> Unit) {
             Modifier.width(200.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            CheckButton(image = Pair(
+            CheckButton(
+                75,
+                image = Pair(
                 R.drawable.button_check_back,
                 R.drawable.button_check_front
             )){fnForward.invoke()}
-            CheckButton(image = Pair(
+            CheckButton(
+                75,
+                image = Pair(
                 R.drawable.button_cancel_back,
                 R.drawable.button_cancel_front
             )){fnBack.invoke()}
@@ -195,11 +199,15 @@ fun Customization(fnForward: () -> Unit,fnBack:() -> Unit) {
                     Modifier.width(200.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    CheckButton(image = Pair(
+                    CheckButton(
+                        75,
+                        image = Pair(
                         R.drawable.button_check_back,
                         R.drawable.button_check_front
                     )){fnForward.invoke()}
-                    CheckButton(image = Pair(
+                    CheckButton(
+                        75,
+                        image = Pair(
                         R.drawable.button_cancel_back,
                         R.drawable.button_cancel_front
                     )){fnBack.invoke()}
@@ -299,11 +307,15 @@ fun StatDistribution(fnForward: () -> Unit,fnBack:() -> Unit) {
             Modifier.width(200.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            CheckButton(image = Pair(
+            CheckButton(
+                75,
+                image = Pair(
                 R.drawable.button_check_back,
                 R.drawable.button_check_front
             )){fnForward.invoke()}
-            CheckButton(image = Pair(
+            CheckButton(
+                75,
+                image = Pair(
                 R.drawable.button_cancel_back,
                 R.drawable.button_cancel_front
             )){fnBack.invoke()}
@@ -375,9 +387,9 @@ fun StatButtons(text:String,points:Int ,minus:()-> Unit,plus:()-> Unit) {
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun CheckButton(image:Pair<Int,Int>, fn:() -> Unit) {
+fun CheckButton(buttonSize:Int,image:Pair<Int,Int>, fn:() -> Unit,) {
     var opacity by remember { mutableStateOf(1f) }
-    var size by remember { mutableStateOf(75) }
+    var size by remember { mutableStateOf(buttonSize) }
     var isBeingPressed by remember { mutableStateOf(false) }
 
     Box(
@@ -387,12 +399,12 @@ fun CheckButton(image:Pair<Int,Int>, fn:() -> Unit) {
                 when (motionEvent.action) {
                     MotionEvent.ACTION_DOWN -> {
                         isBeingPressed = true
-                        size = 65
+                        size -= 10
                         opacity = 0.5f
                     }
                     MotionEvent.ACTION_UP -> {
                         isBeingPressed = false
-                        size = 75
+                        size += 10
                         opacity = 1f
                         fn.invoke()
                     }

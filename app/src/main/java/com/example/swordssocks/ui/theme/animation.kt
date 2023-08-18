@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.swordssocks.R
 import com.example.swordssocks.characters.CharacterBox
+import com.example.swordssocks.characters.CharacterDisplay
 import com.example.swordssocks.database.User
 import kotlinx.coroutines.delay
 
@@ -91,12 +92,9 @@ fun HitCharacterAnimation(attack:Pair<Boolean,String>, num:Int, user: User) {
 
     Box(Modifier, Alignment.Center) {
 
-        CharacterBox(
+        CharacterDisplay(
             hairColor = ColorFilter.tint(user.draw.hairColor),
-            hairStyle = user.draw.hair,
-            eye = user.draw.eyes,
-            mouth = user.draw.mouth,
-            skin = user.draw.skin,
+            user = user,
             size = 200,
             opacity = opacity,
             colorTint = colorTint

@@ -16,3 +16,8 @@ suspend fun retrieveAllUsers(userRepository: UserRepository): List<User> = withC
     // Perform the database operation within the IO Dispatcher
     userRepository.listAllUsers()
 }
+
+suspend fun getUserByID(userRepository: UserRepository,ID:Long?): User = withContext(Dispatchers.IO) {
+    // Perform the database operation within the IO Dispatcher
+    userRepository.getById(ID)
+}
