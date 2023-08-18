@@ -17,7 +17,7 @@ fun GenerateFoe():User{
         exp = 100,
         level = 1,
         draw = randomDrawInstructions(),
-        inventory = Inventory(ArrayList(),ArrayList(),ArrayList(),ArrayList())
+        inventory = Inventory(ArrayList(),ArrayList(),ArrayList())
     )
 }
 

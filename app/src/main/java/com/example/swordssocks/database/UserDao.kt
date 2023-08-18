@@ -1,7 +1,7 @@
 package com.example.swordssocks.database
 
 import androidx.room.*
-import com.example.swordssocks.gladiator_items.MeleeWeapon
+import com.example.swordssocks.gladiator_items.Weapon
 
 @Dao
 interface UserDao {
@@ -17,7 +17,7 @@ interface UserDao {
     @Query("SELECT * FROM User WHERE id = :id")
     fun getById(id:Long?): User
     @Transaction
-    fun toggleMeleeWeapon(weapon:MeleeWeapon, id:Long?,order:String){
+    fun toggleWeapon(weapon:Weapon, id:Long?, order:String){
         val user = getById(id)
 
         when(order){
@@ -34,7 +34,35 @@ interface UserDao {
                 }
             }
         }
-
         updateExistingUser(user)
+    }
+    @Transaction
+    fun toggleCoins(coins:Int, id:Long?){
+        val user = getById(id)
+        user.coins += coins
+        updateExistingUser(user)
+    }
+    @Transaction
+    fun buyItem(item:Inventory, user: User){
+        val user = getById(user.id)
+        var cost = 0
+        if (item.meleeWeapons.isNotEmpty()){
+            for (x in item.meleeWeapons){
+                cost += x.price
+                toggleWeapon(weapon = x, user.id,"add")
+            }
+        }
+        if (item.potions.isNotEmpty()){
+            for (x in item.potions){
+                cost += x.price
+            }
+        }
+        if (item.armors.isNotEmpty()){
+            for (x in item.armors){
+                cost += x.price
+            }
+        }
+        toggleCoins(cost,user.id)
+
     }
 }

@@ -98,7 +98,6 @@ fun CreationScreen(
                 Inventory(
                     potions = arrayListOf(smallPotion),
                     meleeWeapons = arrayListOf(),
-                    magicWeapons = arrayListOf(),
                     armors = arrayListOf()
                 )
             )

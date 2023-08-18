@@ -28,7 +28,7 @@ fun MenuScreen(
     userRepository: UserRepository
 ) {
     Box(
-        Modifier.fillMaxWidth(),
+        Modifier.fillMaxWidth().background(Color.Black),
         //horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(

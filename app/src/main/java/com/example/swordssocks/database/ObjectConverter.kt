@@ -1,10 +1,8 @@
 package com.example.swordssocks.database
 
 import androidx.room.TypeConverter
-import androidx.room.TypeConverters
 import com.example.swordssocks.gladiator_items.Armor
-import com.example.swordssocks.gladiator_items.MagicWeapon
-import com.example.swordssocks.gladiator_items.MeleeWeapon
+import com.example.swordssocks.gladiator_items.Weapon
 import com.example.swordssocks.gladiator_items.Potion
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -40,8 +38,7 @@ class DrawConverter{
 
 class Inventory (
     var potions: ArrayList<Potion>,
-    var meleeWeapons: ArrayList<MeleeWeapon>,
-    var magicWeapons: ArrayList<MagicWeapon>,
+    var meleeWeapons: ArrayList<Weapon>,
     var armors: ArrayList<Armor>
 ){
 }

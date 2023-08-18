@@ -19,18 +19,29 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.example.swordssocks.R
+import com.example.swordssocks.database.Inventory
+import com.example.swordssocks.database.User
 import com.example.swordssocks.database.UserRepository
 import com.example.swordssocks.gladiator_items.*
 import com.example.swordssocks.ui.theme.DarkOrange
 import com.example.swordssocks.ui.theme.SandColor
 import com.example.swordssocks.ui.theme.SandPaper
+import kotlinx.coroutines.Dispatchers
 
 @Composable
-fun WeaponPopup(userRepository: UserRepository,exitFn: ()-> Unit) {
+fun WeaponPopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
     Popup(alignment = Alignment.Center) {
 
         var selectedItem: Int by remember { mutableStateOf(0) }
-        var displayItem: MeleeWeapon by remember { mutableStateOf(weaponArray[selectedItem]) }
+        var displayItem: Weapon by remember { mutableStateOf(weaponArray[selectedItem]) }
+        var weaponStock by remember { mutableStateOf(weaponArray)}
+        //remove items user already have
+        LaunchedEffect(weaponStock){
+            for (x in user.inventory.meleeWeapons){
+                weaponStock = weaponArray.filter { it != x }.toTypedArray()
+            }
+        }
+
 
 
         Row() {
@@ -50,21 +61,23 @@ fun WeaponPopup(userRepository: UserRepository,exitFn: ()-> Unit) {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ){
-                    items(weaponArray.size){ index ->
+                    items(weaponStock.size){ index ->
                         if (selectedItem == index){
                             Text(
-                                text = weaponArray[index].name,
-                                Modifier.border(
-                                    width = 2.dp,
-                                    color = Color.Black,
-                                    shape = RoundedCornerShape(1.dp)
-                                ).padding(4.dp)
+                                text = weaponStock[index].name,
+                                Modifier
+                                    .border(
+                                        width = 2.dp,
+                                        color = Color.Black,
+                                        shape = RoundedCornerShape(1.dp)
+                                    )
+                                    .padding(4.dp)
                             )
                         }else{
                             Text(
-                                text = weaponArray[index].name,
+                                text = weaponStock[index].name,
                                 Modifier.clickable {
-                                    displayItem = weaponArray[index]
+                                    displayItem = weaponStock[index]
                                     selectedItem = index
                                 }
                             )
@@ -85,7 +98,9 @@ fun WeaponPopup(userRepository: UserRepository,exitFn: ()-> Unit) {
                 contentAlignment = Alignment.TopStart
             ) {
                 Column(
-                    Modifier.width(100.dp).height(200.dp)
+                    Modifier
+                        .width(100.dp)
+                        .height(200.dp)
                         .padding(end = 10.dp, top = 45.dp)
                         .clip(RoundedCornerShape(15.dp))
                         .background(SandColor)
@@ -126,7 +141,15 @@ fun WeaponPopup(userRepository: UserRepository,exitFn: ()-> Unit) {
                     }
                 }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        userRepository.performDatabaseOperation(Dispatchers.IO){
+                            if (user.coins >= displayItem.price){
+                                userRepository.buyItem(Inventory(arrayListOf(), arrayListOf(displayItem),arrayListOf()),user)
+                                weaponStock = weaponArray.filter { it != displayItem }.toTypedArray()
+                                displayItem = weaponStock[0]
+                            }
+                        }
+                    },
                     Modifier
                         .align(Alignment.BottomCenter),
                     colors = ButtonDefaults.buttonColors(backgroundColor = DarkOrange)
@@ -139,7 +162,7 @@ fun WeaponPopup(userRepository: UserRepository,exitFn: ()-> Unit) {
     }
 }
 
-val weaponArray = arrayOf(
+var weaponArray = arrayOf(
     woodSword,
     ironSword,
     goldSword,

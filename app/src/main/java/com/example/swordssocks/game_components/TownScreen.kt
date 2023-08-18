@@ -11,11 +11,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.swordssocks.R
-import com.example.swordssocks.characters.CharacterBox
 import com.example.swordssocks.characters.CharacterDisplay
 import com.example.swordssocks.database.User
 import com.example.swordssocks.database.UserRepository
 import com.example.swordssocks.database.getUserByID
+import com.example.swordssocks.database.retrieveAllUsers
 import com.example.swordssocks.nav_graph.Screen
 import com.google.gson.Gson
 
@@ -29,10 +29,17 @@ fun TownScreen(
 ) {
     var weaponShop by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState(239)
-    var user = userEnter
+    var user by remember { mutableStateOf(userEnter) }
+
     LaunchedEffect(weaponShop){
-        user = getUserByID(userRepository,user.id)
+        if (user.id == null){
+            val userList = retrieveAllUsers(userRepository)
+            user = userList[userList.size-1]
+        }else{
+            user = getUserByID(userRepository,user.id)
+        }
     }
+    println(user.draw.hairColor)
 
     Column(
         Modifier.horizontalScroll(state = scrollState),
@@ -41,7 +48,7 @@ fun TownScreen(
         Box() {
             if (weaponShop){
                 Box(Modifier.align(Alignment.Center)) {
-                    WeaponPopup(userRepository){
+                    WeaponPopup(user,userRepository){
                         weaponShop = false
                     }
                 }
@@ -62,14 +69,16 @@ fun TownScreen(
                 painter = painterResource(id = R.drawable.village_weaponsmith_temp),
                 contentDescription = null
             )
-            Box(modifier = Modifier.align(Alignment.BottomCenter)) {
-                CharacterDisplay(
-                    hairColor = ColorFilter.tint(user.draw.hairColor),
-                    user = user,
-                    size = 150,
-                    opacity = 1.0F,
-                    colorTint = null
-                )
+            user?.let {
+                Box(modifier = Modifier.align(Alignment.BottomCenter)) {
+                    CharacterDisplay(
+                        hairColor = ColorFilter.tint(user.draw.hairColor),
+                        user = user,
+                        size = 150,
+                        opacity = 1.0F,
+                        colorTint = null
+                    )
+                }
             }
         }
     }
@@ -100,7 +109,6 @@ fun TownScreen(
         }
     }
 }
-
 @Composable
 fun CircleButton(picture:Int,text: String, onClick: ()-> Unit) {
     Box(Modifier, contentAlignment = Alignment.Center) {

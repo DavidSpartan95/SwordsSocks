@@ -63,29 +63,6 @@ fun CharacterBox(
                 .size(sizeDP).graphicsLayer(alpha = opacity),
             colorFilter = colorTint,
         )
-        //socks
-        /*Image(
-            painter = painterResource(R.drawable.character_socks_3),
-            contentDescription = null,
-            modifier = Modifier
-                .size(sizeDP),
-        )*/
-        //Sandals
-        Image(
-            painter = painterResource(R.drawable.character_sandals_2),
-            contentDescription = null,
-            modifier = Modifier
-                .size(sizeDP).graphicsLayer(alpha = opacity),
-            colorFilter = colorTint,
-        )
-        //Weapon
-        Image(
-            painter = painterResource(R.drawable.sword_wood_equipped),
-            contentDescription = null,
-            modifier = Modifier
-                .size(sizeDP).graphicsLayer(alpha = opacity),
-            colorFilter = colorTint,
-        )
     }
 }
 
@@ -146,7 +123,7 @@ fun CharacterDisplay(
         //Weapon
         if (user.inventory.meleeWeapons.isNotEmpty()){
             Image(
-                painter = painterResource(user.inventory.meleeWeapons[0].display),
+                painter = painterResource(user.inventory.meleeWeapons[0].equipped),
                 contentDescription = null,
                 modifier = Modifier
                     .size(sizeDP).graphicsLayer(alpha = opacity),

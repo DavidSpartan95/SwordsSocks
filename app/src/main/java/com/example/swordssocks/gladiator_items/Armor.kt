@@ -6,6 +6,8 @@ class Armor(
     val armor:Int,
     val part: String,
     val display: Int,
-    val equipped: Int,) {
+    val equipped: Int,
+    val price: Int,
+) {
 
 }
