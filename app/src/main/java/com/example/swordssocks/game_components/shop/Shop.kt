@@ -1,4 +1,4 @@
-package com.example.swordssocks.game_components
+package com.example.swordssocks.game_components.shop
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,6 +22,7 @@ import com.example.swordssocks.R
 import com.example.swordssocks.database.Inventory
 import com.example.swordssocks.database.User
 import com.example.swordssocks.database.UserRepository
+import com.example.swordssocks.game_components.CheckButton
 import com.example.swordssocks.gladiator_items.*
 import com.example.swordssocks.ui.theme.DarkOrange
 import com.example.swordssocks.ui.theme.SandColor

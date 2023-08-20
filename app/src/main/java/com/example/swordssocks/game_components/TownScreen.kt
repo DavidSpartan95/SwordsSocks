@@ -16,6 +16,8 @@ import com.example.swordssocks.database.User
 import com.example.swordssocks.database.UserRepository
 import com.example.swordssocks.database.getUserByID
 import com.example.swordssocks.database.retrieveAllUsers
+import com.example.swordssocks.game_components.shop.ArmorPopup
+import com.example.swordssocks.game_components.shop.WeaponPopup
 import com.example.swordssocks.nav_graph.Screen
 import com.google.gson.Gson
 
@@ -27,11 +29,11 @@ fun TownScreen(
     userRepository: UserRepository,
     userEnter: User,
 ) {
-    var weaponShop by remember { mutableStateOf(false) }
+    var shop:Pair<Boolean,String> by remember { mutableStateOf(Pair(false,"")) }
     val scrollState = rememberScrollState(239)
     var user by remember { mutableStateOf(userEnter) }
 
-    LaunchedEffect(weaponShop){
+    LaunchedEffect(shop){
         if (user.id == null){
             val userList = retrieveAllUsers(userRepository)
             user = userList[userList.size-1]
@@ -46,10 +48,21 @@ fun TownScreen(
     ) {
         //This box paints the Town
         Box() {
-            if (weaponShop){
-                Box(Modifier.align(Alignment.Center)) {
-                    WeaponPopup(user,userRepository){
-                        weaponShop = false
+            if (shop.first){
+                when(shop.second){
+                    "weapon" -> {
+                        Box(Modifier.align(Alignment.Center)) {
+                            WeaponPopup(user,userRepository){
+                                shop = Pair(false,"")
+                            }
+                        }
+                    }
+                    "armor" -> {
+                        Box(Modifier.align(Alignment.Center)) {
+                            ArmorPopup(user,userRepository){
+                                shop = Pair(false,"")
+                            }
+                        }
                     }
                 }
             }
@@ -82,7 +95,7 @@ fun TownScreen(
             }
         }
     }
-    if(!weaponShop){
+    if(!shop.first){
         Box(Modifier.fillMaxSize()) {
 
             Box(Modifier.align(Alignment.TopCenter)) {
@@ -101,8 +114,11 @@ fun TownScreen(
                                 inclusive = true
                             }}
                     }
-                    CircleButton(picture = R.drawable.button_cancel_back, text = "Shop"){
-                        weaponShop = true
+                    CircleButton(picture = R.drawable.button_cancel_back, text = "Weapon"){
+                        shop = Pair(true,"weapon")
+                    }
+                    CircleButton(picture = R.drawable.button_cancel_back, text = "Armor"){
+                        shop = Pair(true,"armor")
                     }
                 }
             }
