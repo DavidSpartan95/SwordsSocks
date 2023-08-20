@@ -63,7 +63,6 @@ fun LoadGameScreen(
                     .size(height = 90.dp, width = 290.dp)
                 )
                 {
-
                     Text("EMPTY",
                         Modifier.align(Alignment.Center),
                         fontSize = 50.sp, color = Color.White
