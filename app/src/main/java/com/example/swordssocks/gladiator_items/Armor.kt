@@ -58,6 +58,14 @@ val greatSocks = Armor(
     1500
 )
 //chestplate
+val leatherChestplate = Armor(
+    name = "Leather Chestplate",
+    armor = 15,
+    "Chest",
+    R.drawable.character_chestplate_1,
+    R.drawable.character_chestplate_1_display,
+    250
+)
 val ironChestplate = Armor(
     name = "Iron Chestplate",
     armor = 25,
@@ -100,6 +108,14 @@ val goldHelmet = Armor(
     1500,
 )
 //leggins
+val leatherLeggings = Armor(
+    name = "Leather Leggings",
+    armor = 13,
+    "Leggings",
+    R.drawable.character_leggins_1,
+    R.drawable.character_leggins_1_display,
+    900,
+)
 val ironLeggings = Armor(
     name = "Iron Leggings",
     armor = 20,

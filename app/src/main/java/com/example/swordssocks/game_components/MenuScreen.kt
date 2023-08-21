@@ -34,12 +34,11 @@ fun MenuScreen(
         Image(
             painter = painterResource(id = R.drawable.introscreen_text),
             contentDescription = "",
-            Modifier.fillMaxSize()
+            Modifier.fillMaxSize().padding(bottom = 50.dp)
         )
 
-
         Box(Modifier.align(Alignment.BottomCenter)) {
-            Column() {
+            Row(Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceEvenly) {
                 Button(
                     onClick = {
                         navController.navigate(route = "creation_screen"){

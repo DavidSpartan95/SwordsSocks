@@ -166,11 +166,13 @@ val armorShop = arrayOf(
     basicSocks,
     normalSocks,
     greatSocks,
+    leatherChestplate,
     ironChestplate,
     goldChestplate,
     leatherHelmet,
     //ironHelmet,
     goldHelmet,
+    leatherLeggings,
     ironLeggings,
     goldLeggings
 )
