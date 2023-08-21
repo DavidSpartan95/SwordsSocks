@@ -159,4 +159,18 @@ fun ArmorPopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
         }
     }
 }
-val armorShop = arrayOf(basicSandal,normalSandal, clogs, basicSocks, normalSocks, greatSocks)
+val armorShop = arrayOf(
+    basicSandal,
+    normalSandal,
+    clogs,
+    basicSocks,
+    normalSocks,
+    greatSocks,
+    ironChestplate,
+    goldChestplate,
+    leatherHelmet,
+    //ironHelmet,
+    goldHelmet,
+    ironLeggings,
+    goldLeggings
+)
