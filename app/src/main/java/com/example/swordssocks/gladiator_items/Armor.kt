@@ -116,3 +116,4 @@ val goldLeggings = Armor(
     R.drawable.character_leggins_3_display,
     4000,
 )
+//Hej
