@@ -25,6 +25,9 @@ class UserRepository(
     fun buyItem(item:Inventory, user: User){
         appDatabase.userDao().buyItem(item,user)
     }
+    fun toggleCoins(coins:Int, id: Long?){
+        appDatabase.userDao().toggleCoins(coins, id)
+    }
     fun performDatabaseOperation(
         dispatcher: CoroutineDispatcher,
         databaseOperation: suspend () -> Unit

@@ -89,7 +89,7 @@ val woodAxe = Weapon(
     "normal",
     24,
     R.drawable.axe_wood_display,
-    R.drawable.sword_wood_equipped,
+    R.drawable.axe_wood_equipped,
     150
 )
 val ironAxe = Weapon(
@@ -99,8 +99,29 @@ val ironAxe = Weapon(
     "normal",
     24,
     R.drawable.axe_iron_display,
-    R.drawable.sword_iron_equipped,
+    R.drawable.axe_iron_equipped,
     750
+)
+val goldAxe = Weapon(
+    "Gold Axe",
+    30,
+    85,
+    "normal",
+    24,
+    R.drawable.axe_gold_display,
+    R.drawable.axe_gold_equipped,
+    10750
+)
+
+val diamondAxe = Weapon(
+    "Diamond Axe",
+    30,
+    85,
+    "normal",
+    24,
+    R.drawable.axe_diamond_display,
+    R.drawable.axe_diamond_equipped,
+    10750
 )
 //Staff
 val staffAmber = Weapon(
@@ -137,7 +158,7 @@ val staffDiamond = Weapon(
     "Amber Staff",
     70,
     100,
-    "electric",
+    "spark",
     12,
     R.drawable.staff_diamond_display,
     R.drawable.staff_diamond_equipped,

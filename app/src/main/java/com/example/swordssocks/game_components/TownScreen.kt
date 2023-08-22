@@ -2,12 +2,16 @@ package com.example.swordssocks.game_components
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.swordssocks.R
@@ -17,10 +21,12 @@ import com.example.swordssocks.database.UserRepository
 import com.example.swordssocks.database.getUserByID
 import com.example.swordssocks.database.retrieveAllUsers
 import com.example.swordssocks.game_components.shop.ArmorPopup
+import com.example.swordssocks.game_components.shop.MagePopup
 import com.example.swordssocks.game_components.shop.WeaponPopup
 import com.example.swordssocks.nav_graph.Screen
+import com.example.swordssocks.ui.theme.SandColor
 import com.google.gson.Gson
-
+import kotlinx.coroutines.Dispatchers
 
 
 @Composable
@@ -32,6 +38,7 @@ fun TownScreen(
     var shop:Pair<Boolean,String> by remember { mutableStateOf(Pair(false,"")) }
     val scrollState = rememberScrollState(239)
     var user by remember { mutableStateOf(userEnter) }
+    var coins by remember { mutableStateOf(userEnter.coins) }
 
     LaunchedEffect(shop){
         if (user.id == null){
@@ -41,7 +48,7 @@ fun TownScreen(
             user = getUserByID(userRepository,user.id)
         }
     }
-    println(user.draw.hairColor)
+
 
     Column(
         Modifier.horizontalScroll(state = scrollState),
@@ -60,6 +67,13 @@ fun TownScreen(
                     "armor" -> {
                         Box(Modifier.align(Alignment.Center)) {
                             ArmorPopup(user,userRepository){
+                                shop = Pair(false,"")
+                            }
+                        }
+                    }
+                    "mage" -> {
+                        Box(Modifier.align(Alignment.Center)) {
+                            MagePopup(user,userRepository){
                                 shop = Pair(false,"")
                             }
                         }
@@ -119,6 +133,33 @@ fun TownScreen(
                     }
                     CircleButton(picture = R.drawable.button_cancel_back, text = "Armor"){
                         shop = Pair(true,"armor")
+                    }
+                    CircleButton(picture = R.drawable.button_cancel_back, text = "Mage"){
+                        shop = Pair(true,"mage")
+                    }
+                    CircleButton(picture = R.drawable.button_cancel_back, text = "Coins++"){
+                        userRepository.performDatabaseOperation(Dispatchers.IO){
+                            userRepository.toggleCoins(99999,user.id)
+                            coins+= 99999
+                        }
+                    }
+                    Box(Modifier
+                        .width(200.dp)
+                        .height(50.dp)
+                        .padding(end = 10.dp, top = 10.dp)
+                        .clip(RoundedCornerShape(15.dp))
+                        .background(SandColor)
+                        .border(
+                            width = 2.dp,
+                            color = Color.Black,
+                            shape = RoundedCornerShape(15.dp)
+                        ),
+                        Alignment.Center
+                    ){
+                        Text(
+                            text = "Level: ${user.level} Coins:${coins}",
+                            fontWeight = FontWeight.Bold,
+                        )
                     }
                 }
             }

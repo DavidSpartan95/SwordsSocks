@@ -31,14 +31,28 @@ import com.example.swordssocks.ui.theme.SandPaper
 import kotlinx.coroutines.Dispatchers
 
 @Composable
-fun ArmorPopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
+fun MagePopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
     Popup(alignment = Alignment.Center) {
 
-        var selectedItem: Int by remember { mutableStateOf(0) }
-        var displayItem: Armor by remember { mutableStateOf(armorShop[selectedItem]) }
-        var armorStock by remember { mutableStateOf(armorShop)}
+        var selected: Int by remember { mutableStateOf(0) }
+        var potionStock by remember { mutableStateOf(potionArray) }
+        var displayImage: Int by remember { mutableStateOf(potionArray[0].display) }
+        var price: Int by remember { mutableStateOf(potionArray[0].price) }
+        var weaponStock by remember { mutableStateOf(mageArray) }
         var coins: Int by remember { mutableStateOf(user.coins) }
+        var infoText by remember{ mutableStateOf(
+            arrayOf(
+                "Heal: ${potionArray[0].recovery}%",
+            )
+        )
+        }
+
         //remove items user already have
+        LaunchedEffect(weaponStock){
+            for (x in user.inventory.meleeWeapons){
+                weaponStock = mageArray.filter { it != x }.toTypedArray()
+            }
+        }
 
         Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
             Box(
@@ -77,26 +91,61 @@ fun ArmorPopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                     ){
-                        items(armorStock.size){ index ->
-                            if (selectedItem == index){
-                                Text(
-                                    text = armorStock[index].name,
-                                    Modifier
-                                        .border(
-                                            width = 2.dp,
-                                            color = Color.Black,
-                                            shape = RoundedCornerShape(1.dp)
-                                        )
-                                        .padding(4.dp)
-                                )
+                        items(potionStock.size+weaponStock.size){ index ->
+                            if (index < potionStock.size){
+                                if (index == selected){
+                                    Text(
+                                        text = potionStock[index].name,
+                                        Modifier
+                                            .border(
+                                                width = 2.dp,
+                                                color = Color.Black,
+                                                shape = RoundedCornerShape(1.dp)
+                                            )
+                                            .padding(4.dp)
+                                    )
+                                }
+                                else {
+                                    Text(
+                                        text = potionStock[index].name,
+                                        Modifier
+                                            .clickable {
+                                                selected = index
+                                                displayImage = potionStock[index].display
+                                                infoText = arrayOf("Heal: ${potionArray[index].recovery}%",)
+                                                price = potionArray[index].price
+                                            }
+                                    )
+                                }
                             }else{
-                                Text(
-                                    text = armorStock[index].name,
-                                    Modifier.clickable {
-                                        displayItem = armorStock[index]
-                                        selectedItem = index
-                                    }
-                                )
+                                if (selected == index){
+                                    Text(
+                                        text = weaponStock[index-potionStock.size].name,
+                                        Modifier
+                                            .border(
+                                                width = 2.dp,
+                                                color = Color.Black,
+                                                shape = RoundedCornerShape(1.dp)
+                                            )
+                                            .padding(4.dp)
+                                    )
+                                }else {
+                                    Text(
+                                        text = weaponStock[index-potionStock.size].name,
+                                        Modifier
+                                            .clickable {
+                                                selected = index
+                                                displayImage = weaponStock[index-potionStock.size].display
+                                                infoText = arrayOf(
+                                                    "Pow: ${weaponStock[index-potionStock.size].power}",
+                                                    "Type: ${weaponStock[index-potionStock.size].element}",
+                                                    "Acc: ${weaponStock[index-potionStock.size].acc}",
+                                                    "Crit: ${weaponStock[index-potionStock.size].criticalChance}%",
+                                                )
+                                                price = weaponStock[index-potionStock.size].price
+                                            }
+                                    )
+                                }
                             }
                         }
                     }
@@ -130,11 +179,12 @@ fun ArmorPopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
                         verticalArrangement = Arrangement.SpaceEvenly,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(text = displayItem.part)
-                        Text(text = "Armor: ${displayItem.armor}")
+                        for (x in infoText){
+                            Text(text = x)
+                        }
                     }
                     Image(
-                        painter = painterResource(id = displayItem.display),
+                        painter = painterResource(id = displayImage),
                         contentDescription = null,
                         Modifier
                             .size(200.dp)
@@ -157,10 +207,19 @@ fun ArmorPopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
                     }
                     Button(
                         onClick = {
-                            userRepository.performDatabaseOperation(Dispatchers.IO){
-                                if (user.coins >= displayItem.price){
-                                    userRepository.buyItem(Inventory(arrayListOf(), arrayListOf(),arrayListOf(displayItem)),user)
-                                    coins -= displayItem.price
+                            if (selected < potionStock.size){
+                                userRepository.performDatabaseOperation(Dispatchers.IO){
+                                    if (user.coins >= price){
+                                        userRepository.buyItem(Inventory(arrayListOf(potionStock[selected]), arrayListOf(),arrayListOf()),user)
+                                        coins -= price
+                                    }
+                                }
+                            }else {
+                                userRepository.performDatabaseOperation(Dispatchers.IO){
+                                    if (user.coins >= price){
+                                        userRepository.buyItem(Inventory(arrayListOf(), arrayListOf(weaponStock[selected-potionStock.size]),arrayListOf()),user)
+                                        coins -= price
+                                    }
                                 }
                             }
                         },
@@ -168,29 +227,22 @@ fun ArmorPopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
                             .align(Alignment.BottomCenter),
                         colors = ButtonDefaults.buttonColors(backgroundColor = DarkOrange)
                     ) {
-                        Text(text = "Buy (${displayItem.price})", color = Color.White)
-
+                        Text(text = "Buy ($price)", color = Color.White)
                     }
                 }
             }
         }
-
     }
 }
-val armorShop = arrayOf(
-    basicSandal,
-    normalSandal,
-    clogs,
-    basicSocks,
-    normalSocks,
-    greatSocks,
-    leatherChestplate,
-    ironChestplate,
-    goldChestplate,
-    leatherHelmet,
-    //ironHelmet,
-    goldHelmet,
-    leatherLeggings,
-    ironLeggings,
-    goldLeggings
+val potionArray = arrayOf(
+    smallPotion,
+    mediumPotion,
+    largePotion
+)
+
+var mageArray = arrayOf(
+    staffAmber,
+    staffEmerald,
+    staffGarnet,
+    staffDiamond
 )

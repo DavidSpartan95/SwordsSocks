@@ -110,15 +110,72 @@ fun CharacterDisplay(
                 .size(sizeDP).graphicsLayer(alpha = opacity),
             colorFilter = colorTint,
         )
-        //Sandals
+        //Socks
         if (user.inventory.armors.isNotEmpty()){
-            Image(
-                painter = painterResource(user.inventory.armors[0].display),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(sizeDP).graphicsLayer(alpha = opacity),
-                colorFilter = colorTint,
-            )
+            println("Inside "+user.inventory.armors.size)
+            for (x in user.inventory.armors){
+                if (x.part == "Socks"){
+                    Image(
+                        painter = painterResource(x.equipped),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(sizeDP).graphicsLayer(alpha = opacity),
+                        colorFilter = colorTint,
+                    )
+                }
+            }
+            //Sandals
+            for (x in user.inventory.armors){
+                if (x.part == "Sandal"){
+                    Image(
+                        painter = painterResource(x.equipped),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(sizeDP).graphicsLayer(alpha = opacity),
+                        colorFilter = colorTint,
+                    )
+                    break
+                }
+            }
+            //Chest
+            for (x in user.inventory.armors){
+                if (x.part == "Chest"){
+                    Image(
+                        painter = painterResource(x.equipped),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(sizeDP).graphicsLayer(alpha = opacity),
+                        colorFilter = colorTint,
+                    )
+                    break
+                }
+            }
+            //Helmet
+            for (x in user.inventory.armors){
+                if (x.part == "Helmet"){
+                    Image(
+                        painter = painterResource(x.equipped),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(sizeDP).graphicsLayer(alpha = opacity),
+                        colorFilter = colorTint,
+                    )
+                    break
+                }
+            }
+            //Leggings
+            for (x in user.inventory.armors){
+                if (x.part == "Leggings"){
+                    Image(
+                        painter = painterResource(x.equipped),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(sizeDP).graphicsLayer(alpha = opacity),
+                        colorFilter = colorTint,
+                    )
+                    break
+                }
+            }
         }
         //Weapon
         if (user.inventory.meleeWeapons.isNotEmpty()){

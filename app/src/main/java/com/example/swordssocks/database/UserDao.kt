@@ -1,6 +1,8 @@
 package com.example.swordssocks.database
 
 import androidx.room.*
+import com.example.swordssocks.gladiator_items.Armor
+import com.example.swordssocks.gladiator_items.Potion
 import com.example.swordssocks.gladiator_items.Weapon
 
 @Dao
@@ -22,13 +24,53 @@ interface UserDao {
 
         when(order){
             "add"->{
-                user.inventory.meleeWeapons += weapon
+                user.inventory.meleeWeapons.add(0, weapon)
                 updateExistingUser(user)
             }
             "remove"->{
                 for ((index,x) in user.inventory.meleeWeapons.withIndex()){
                     if(x.name == weapon.name ){
                         user.inventory.meleeWeapons.removeAt(index)
+                        break
+                    }
+                }
+            }
+        }
+        updateExistingUser(user)
+    }
+    @Transaction
+    fun toggleArmor(armor: Armor, id:Long?, order:String){
+        val user = getById(id)
+
+        when(order){
+            "add"->{
+                user.inventory.armors.add(0,armor)
+                updateExistingUser(user)
+            }
+            "remove"->{
+                for ((index,x) in user.inventory.armors.withIndex()){
+                    if(x.name == armor.name ){
+                        user.inventory.armors.removeAt(index)
+                        break
+                    }
+                }
+            }
+        }
+        updateExistingUser(user)
+    }
+    @Transaction
+    fun togglePotion(potion: Potion, id:Long?, order:String){
+        val user = getById(id)
+
+        when(order){
+            "add"->{
+                user.inventory.potions += potion
+                updateExistingUser(user)
+            }
+            "remove"->{
+                for ((index,x) in user.inventory.potions.withIndex()){
+                    if(x.name == potion.name ){
+                        user.inventory.potions.removeAt(index)
                         break
                     }
                 }
@@ -55,14 +97,16 @@ interface UserDao {
         if (item.potions.isNotEmpty()){
             for (x in item.potions){
                 cost += x.price
+                togglePotion(x,user.id,"add")
             }
         }
         if (item.armors.isNotEmpty()){
             for (x in item.armors){
                 cost += x.price
+                toggleArmor(x,user.id,"add")
             }
         }
-        toggleCoins(cost,user.id)
+        toggleCoins(-cost,user.id)
 
     }
 }
