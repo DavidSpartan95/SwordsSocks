@@ -40,7 +40,7 @@ class Weapon(
     }
 }
 
-//val dagger = MeleeWeapon("dagger", 10,95,"normal",12)
+//MeleeWeapon
 val woodSword = Weapon(
     "Wood Sword",
     20,
@@ -101,6 +101,47 @@ val ironAxe = Weapon(
     R.drawable.axe_iron_display,
     R.drawable.sword_iron_equipped,
     750
+)
+//Staff
+val staffAmber = Weapon(
+    "Amber Staff",
+    15,
+    100,
+    "fire",
+    12,
+    R.drawable.staff_amber_display,
+    R.drawable.staff_amber_equipped,
+    200
+)
+val staffEmerald = Weapon(
+    "Emerald Staff",
+    25,
+    100,
+    "grass",
+    12,
+    R.drawable.staff_emerald_display,
+    R.drawable.staff_emerald_equipped,
+    500
+)
+val staffGarnet = Weapon(
+    "Garnet Staff",
+    50,
+    100,
+    "fire",
+    12,
+    R.drawable.staff_garnet_display,
+    R.drawable.staff_garnet_equipped,
+    1000
+)
+val staffDiamond = Weapon(
+    "Amber Staff",
+    70,
+    100,
+    "electric",
+    12,
+    R.drawable.staff_diamond_display,
+    R.drawable.staff_diamond_equipped,
+    5000
 )
 
 

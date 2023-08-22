@@ -17,16 +17,25 @@ val hairStyles = arrayOf(
     R.drawable.character_hair_1,
     R.drawable.character_hair_2,
     R.drawable.character_hair_3,
+    R.drawable.character_hair_4,
+    R.drawable.character_hair_5,
+    R.drawable.character_hair_6,
 )
 val eyes = arrayOf(
     R.drawable.character_eyes_1,
     R.drawable.character_eyes_2,
     R.drawable.character_eyes_3,
+    R.drawable.character_eyes_4,
+    R.drawable.character_eyes_5,
+    R.drawable.character_eyes_6,
 )
 val mouths = arrayOf(
     R.drawable.character_mouth_1,
     R.drawable.character_mouth_2,
     R.drawable.character_mouth_3,
+    R.drawable.character_mouth_4,
+    R.drawable.character_mouth_5,
+    R.drawable.character_mouth_6,
 )
 val skins = arrayOf(
     R.drawable.character_base_tan,
