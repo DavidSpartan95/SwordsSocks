@@ -21,7 +21,7 @@ import com.example.swordssocks.database.User
 import kotlinx.coroutines.delay
 
 @Composable
-fun HitCharacterAnimation(attack:Pair<Boolean,String>, num:Int, user: User) {
+fun HitCharacterAnimation(attack:Pair<Boolean,String>, turn:Int,damage:Int, user: User) {
 
     var opacity by remember { mutableStateOf(1f) }
     var opacityEffect by remember { mutableStateOf(0f) }
@@ -30,11 +30,20 @@ fun HitCharacterAnimation(attack:Pair<Boolean,String>, num:Int, user: User) {
     var effect by remember { mutableStateOf(R.drawable.flame) }
     var effectColor by remember { mutableStateOf(Color(255,0,0)) }
 
-    LaunchedEffect(num){
+    LaunchedEffect(turn){
         //Bellow are all animation effects based on type
         if (attack.first){
             when (attack.second){
                 "normal" -> {
+                    opacityEffect = 0f
+                    colorTint  = null
+                    repeat(10) {
+                        delay(50)
+                        opacity = 1f - opacity
+                    }
+                    opacity = 1f
+                }
+                "heal" -> {
                     opacityEffect = 0f
                     colorTint  = null
                     repeat(10) {

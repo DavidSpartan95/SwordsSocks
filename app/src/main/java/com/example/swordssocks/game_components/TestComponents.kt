@@ -19,7 +19,7 @@ fun AnimationTest(user: User) {
         var attack by remember { mutableStateOf(Pair(false,"normal")) }
         var attNum by remember { mutableStateOf(0) }
 
-        HitCharacterAnimation(attack,attNum,user)
+        HitCharacterAnimation(attack,attNum,10,user)
 
         Button(onClick = {
             attack = Pair(true,"normal")

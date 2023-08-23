@@ -14,6 +14,8 @@ import androidx.navigation.NavHostController
 import com.example.swordssocks.characters.GenerateFoe
 import com.example.swordssocks.database.User
 import com.example.swordssocks.database.UserRepository
+import com.example.swordssocks.game_components.Battle.findAllPotions
+import com.example.swordssocks.gladiator_items.smallPotion
 import com.example.swordssocks.nav_graph.Screen
 import com.example.swordssocks.ui.theme.HitCharacterAnimation
 import com.google.gson.Gson
@@ -25,12 +27,15 @@ fun ArenaScreen(
     userRepository: UserRepository,
     user: User
 ) {
+    var potions by remember{ mutableStateOf(findAllPotions(user)) }
     var damage by remember{ mutableStateOf(0) }
     var foe by remember { mutableStateOf(GenerateFoe()) }
     var attack by remember { mutableStateOf(Pair(false,"normal")) }
     var attNumUser by remember { mutableStateOf(0) }
     var attNumFoe by remember { mutableStateOf(0) }
     var buttonSelect: Int by remember { mutableStateOf(0) }
+    var HP by remember { mutableStateOf(user.health*2+10) }
+    var foeHP by remember { mutableStateOf(foe.health*2+10) }
 
     val allButtons = arrayOf(
         arrayOf(
@@ -50,7 +55,6 @@ fun ArenaScreen(
                 }
             },
             Triple("Do Nothing",Alignment.BottomEnd){
-
             }
     ),
         arrayOf(
@@ -75,14 +79,22 @@ fun ArenaScreen(
             }
         ),
         arrayOf(
-            Triple("small potion",Alignment.TopStart)
+            Triple("small potion(${potions.first})",Alignment.TopStart)
             {
+                if (potions.first > 0) {
+                    if (smallPotion.heal((user.health*2+10))+HP > (user.health*2+10)){
+                        HP = user.health*2+10
+                    }else{
+                        HP += smallPotion.heal((user.health*2+10))
+                    }
+                    damage = -smallPotion.heal((user.health*2+10))
+                    attack = Pair(true,"heal")
+                }
+            },
+            Triple("medium potion(${potions.second})",Alignment.TopEnd){
 
             },
-            Triple("medium potion",Alignment.TopEnd){
-
-            },
-            Triple("large potion",Alignment.BottomStart){
+            Triple("large potion(${potions.third})",Alignment.BottomStart){
 
             },
             Triple("Back",Alignment.BottomEnd){
@@ -91,21 +103,27 @@ fun ArenaScreen(
         ),
         arrayOf()
     )
-    var HP by remember { mutableStateOf(user.health*2+10) }
-    var foeHP by remember { mutableStateOf(foe.health*2+10) }
     var buttons by remember { mutableStateOf(allButtons[buttonSelect]) }
 
-    LaunchedEffect(buttonSelect,attNumUser){
-        if (attack.first){
-            attack = Pair(false,"")
+    LaunchedEffect(buttonSelect,attack){
+        if (attack.first && attack.second != "heal"){
             foeHP -= damage
             buttons = allButtons[3]
             //attNumUser++
             //attack= Pair(true,foe.inventory.meleeWeapons[0].element)
             //damage=user.inventory.meleeWeapons[0].attack(user,foe,1.0,1.0)
             delay(1000)
-            buttons = allButtons[buttonSelect]
-        }else if (!buttons.contentEquals(allButtons[3])){
+            buttons = allButtons[0]
+            attack = Pair(false,"")
+        }
+        if (attack.second == "heal"){
+            attNumFoe++
+            buttons = allButtons[3]
+            delay(1000)
+            buttons = allButtons[0]
+            attack = Pair(false,"")
+        }
+        else if (!buttons.contentEquals(allButtons[3])){
             buttons = allButtons[buttonSelect]
         }
     }
@@ -115,11 +133,11 @@ fun ArenaScreen(
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(text = "HP $HP")
-                HitCharacterAnimation(attack,attNumFoe,user)
+                HitCharacterAnimation(attack,attNumFoe,damage,user)
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(text = "HP $foeHP")
-                HitCharacterAnimation(attack,attNumUser,foe)
+                HitCharacterAnimation(attack,attNumUser,damage,foe)
             }
         }
         Box(
