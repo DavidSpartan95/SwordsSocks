@@ -48,8 +48,6 @@ fun TownScreen(
             user = getUserByID(userRepository,user.id)
         }
     }
-
-
     Column(
         Modifier.horizontalScroll(state = scrollState),
     ) {
@@ -115,27 +113,27 @@ fun TownScreen(
             Box(Modifier.align(Alignment.TopCenter)) {
 
                 Row() {
-                    CircleButton(picture = R.drawable.button_check_back, text = "Battle"){
+                    CircleButton(picture = R.drawable.button_battle, text = ""){
                         val userJson = Gson().toJson(user)
                         navController.navigate(route = "arena_screen/$userJson"){
                             popUpTo(Screen.Arena.route){
                                 inclusive = true
                             }}
                     }
-                    CircleButton(picture = R.drawable.button_cancel_back, text = "Exit"){
+                    CircleButton(picture = R.drawable.button_weaponshop, text = ""){
+                        shop = Pair(true,"weapon")
+                    }
+                    CircleButton(picture = R.drawable.button_armorshop, text = ""){
+                        shop = Pair(true,"armor")
+                    }
+                    CircleButton(picture = R.drawable.button_magic, text = ""){
+                        shop = Pair(true,"mage")
+                    }
+                    CircleButton(picture = R.drawable.button_exit, text = ""){
                         navController.navigate(route = "home_screen"){
                             popUpTo(Screen.Town.route){
                                 inclusive = true
                             }}
-                    }
-                    CircleButton(picture = R.drawable.button_cancel_back, text = "Weapon"){
-                        shop = Pair(true,"weapon")
-                    }
-                    CircleButton(picture = R.drawable.button_cancel_back, text = "Armor"){
-                        shop = Pair(true,"armor")
-                    }
-                    CircleButton(picture = R.drawable.button_cancel_back, text = "Mage"){
-                        shop = Pair(true,"mage")
                     }
                     CircleButton(picture = R.drawable.button_cancel_back, text = "Coins++"){
                         userRepository.performDatabaseOperation(Dispatchers.IO){
@@ -173,7 +171,7 @@ fun CircleButton(picture:Int,text: String, onClick: ()-> Unit) {
             painter = painterResource(id = picture),
             contentDescription = null,
             Modifier
-                .size(100.dp)
+                .size(75.dp)
                 .clickable {
                     onClick.invoke()
                 }

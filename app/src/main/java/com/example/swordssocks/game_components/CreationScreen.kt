@@ -42,6 +42,7 @@ import com.example.swordssocks.characters.containsOnlyAlphabets
 import com.example.swordssocks.characters.randomNameGenerator
 import com.example.swordssocks.database.*
 import com.example.swordssocks.gladiator_items.Potion
+import com.example.swordssocks.gladiator_items.Weapon
 import com.example.swordssocks.gladiator_items.smallPotion
 import com.example.swordssocks.nav_graph.Screen
 import com.example.swordssocks.viewModel.NameViewModel
@@ -97,7 +98,8 @@ fun CreationScreen(
                 ),
                 Inventory(
                     potions = arrayListOf(smallPotion),
-                    meleeWeapons = arrayListOf(),
+                    meleeWeapons = arrayListOf(
+                        Weapon("fist",10,80,"normal",6,0,0,0)),
                     armors = arrayListOf()
                 )
             )

@@ -55,24 +55,24 @@ fun HitCharacterAnimation(attack:Pair<Boolean,String>, num:Int, user: User) {
                     colorTint  = null
                     opacityEffect = 0f
                 }
-                "water" -> {
-                    effect = R.drawable.water
+                "grass" -> {
+                    effect = R.drawable.leaf
                     var r = 255
-                    var g = 255
-                    effectColor = Color(0,155,255)
+                    var b = 255
+                    effectColor = Color(0,155,10)
                     opacityEffect = 1f
                     repeat(255) {
                         r--
-                        g--
+                        b--
                         delay(1)
-                        color = Color(r,g,255)
+                        color = Color(r,255,b)
                         colorTint  = ColorFilter.tint(color)
                     }
                     colorTint  = null
                     color = Color(255,255,255)
                     opacityEffect = 0f
                 }
-                "electric"->{
+                "spark"->{
                     effect = R.drawable.electric
                     effectColor = Color(255,211,0)
                     color = Color(200,200,200)
