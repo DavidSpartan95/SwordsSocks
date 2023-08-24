@@ -28,6 +28,9 @@ class UserRepository(
     fun toggleCoins(coins:Int, id: Long?){
         appDatabase.userDao().toggleCoins(coins, id)
     }
+    fun levelUp(exp:Int, id: Long?):Boolean{
+        return appDatabase.userDao().levelUp(exp, id)
+    }
     fun performDatabaseOperation(
         dispatcher: CoroutineDispatcher,
         databaseOperation: suspend () -> Unit

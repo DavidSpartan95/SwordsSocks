@@ -3,12 +3,13 @@ package com.example.swordssocks.characters
 import com.example.swordssocks.database.DrawInstruction
 import com.example.swordssocks.database.Inventory
 import com.example.swordssocks.database.User
+import com.example.swordssocks.gladiator_items.woodSword
 import kotlin.random.Random
 
 fun GenerateFoe():User{
     return User(
         name = "Angry Man",
-        health = 20,
+        health = 1,
         strength = 5,
         charisma = 2,
         defence = 2,
@@ -17,7 +18,7 @@ fun GenerateFoe():User{
         exp = 100,
         level = 1,
         draw = randomDrawInstructions(),
-        inventory = Inventory(ArrayList(),ArrayList(),ArrayList())
+        inventory = Inventory(arrayListOf(), arrayListOf(woodSword),arrayListOf())
     )
 }
 

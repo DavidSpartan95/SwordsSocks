@@ -15,7 +15,7 @@ class Weapon(
     val price:Int
     ) {
 
-    fun attack(user: User,foe: User,accModifier:Double, damageModifier:Double):Int{
+    fun attack(user: User,foe: User,accModifier:Double, damageModifier:Double):Pair<Boolean,Int>{
         if (element == "normal"){
             val isHit = Random.nextInt(101) <= (acc)*accModifier
             if (isHit) {
@@ -23,10 +23,10 @@ class Weapon(
                 val criticalMultiplier = if (isCrit) 2 else 1
                 val randomMultiplier = Random.nextDouble(217.0, 256.0) / 255
                 val baseDamage =
-                    ((2 * user.level * criticalMultiplier / 5 + 2) * power * user.strength / foe.defence) / 50 + 2
-                return (baseDamage * randomMultiplier*damageModifier).toInt()
+                    ((2 * user.level / 5 + 2) * power * user.strength / foe.defence) / 50 + 2
+                return Pair(isCrit,(baseDamage * randomMultiplier*damageModifier*criticalMultiplier).toInt())
             }
-            return 0
+            return Pair(false,0)
         }else{
             val isHit = Random.nextInt(101) <= (acc)*accModifier
             if (isHit) {
@@ -35,9 +35,9 @@ class Weapon(
                 val randomMultiplier = Random.nextDouble(217.0, 256.0) / 255
                 val baseDamage =
                     ((2 * user.level * criticalMultiplier / 5 + 2) * power * user.magic / foe.magic) / 50 + 2
-                return (baseDamage * randomMultiplier*damageModifier).toInt()
+                return Pair(isCrit,(baseDamage * randomMultiplier*damageModifier*criticalMultiplier).toInt())
             }
-            return 0
+            return Pair(false,0)
         }
     }
 }

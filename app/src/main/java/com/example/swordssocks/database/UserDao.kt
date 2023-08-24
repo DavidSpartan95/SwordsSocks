@@ -4,6 +4,7 @@ import androidx.room.*
 import com.example.swordssocks.gladiator_items.Armor
 import com.example.swordssocks.gladiator_items.Potion
 import com.example.swordssocks.gladiator_items.Weapon
+import kotlin.math.pow
 
 @Dao
 interface UserDao {
@@ -18,6 +19,25 @@ interface UserDao {
     fun updateExistingUser(user: User)
     @Query("SELECT * FROM User WHERE id = :id")
     fun getById(id:Long?): User
+    @Transaction
+    fun levelUp(exp:Int, id:Long?):Boolean{
+        val user = getById(id)
+        var levelUp = false
+        user.exp += exp
+        println(user.exp)
+        while (true){
+            if (user.exp >= ((user.level+1)*(user.level+1)*(user.level+1))){
+                user.level++
+                println("to Next level${user.level*user.level*user.level}")
+                levelUp = true
+                println(user.level)
+            }else{
+                break
+            }
+        }
+        updateExistingUser(user)
+        return levelUp
+    }
     @Transaction
     fun toggleWeapon(weapon:Weapon, id:Long?, order:String){
         val user = getById(id)
