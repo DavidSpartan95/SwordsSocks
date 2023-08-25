@@ -13,7 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.swordssocks.characters.GenerateFoe
+import com.example.swordssocks.characters.generateFoe
 import com.example.swordssocks.database.User
 import com.example.swordssocks.database.UserRepository
 import com.example.swordssocks.game_components.Battle.LevelUpPopUp
@@ -33,11 +33,11 @@ fun ArenaScreen(
     user: User
 ) {
     var gameOver by remember{ mutableStateOf(Pair(false,"")) }
-    var levelUp by remember{ mutableStateOf(false) }
+    var levelUp by remember{ mutableStateOf(Pair(false,0)) }
     var levelPopUp by remember{ mutableStateOf(false) }
     var potions by remember{ mutableStateOf(findAllPotions(user)) }
     var damage by remember{ mutableStateOf(Pair(false,0)) }
-    var foe by remember { mutableStateOf(GenerateFoe()) }
+    var foe by remember { mutableStateOf(generateFoe(user.level)) }
     var attack by remember { mutableStateOf(Pair(false,"normal")) }
     var attNumUser by remember { mutableStateOf(0) }
     var attNumFoe by remember { mutableStateOf(0) }
@@ -186,7 +186,8 @@ fun ArenaScreen(
         }
     }else if(gameOver.first && gameOver.second == "win"){
         if (levelPopUp){
-            LevelUpPopUp(user = user, skillPoints = 12) {
+            LevelUpPopUp(userRepository,user = user, skillPoints = (12*levelUp.second)) {
+                levelPopUp = false
                 val userJson = Gson().toJson(user)
                 navController.navigate(route = "town_screen/$userJson") {
                     popUpTo(Screen.Arena.route) {
@@ -195,11 +196,11 @@ fun ArenaScreen(
                 }
             }
         }
-
         userRepository.performDatabaseOperation(Dispatchers.IO){
-            if (!levelUp){
-                levelUp = userRepository.levelUp(100,user.id)
+            if (!levelUp.first){
+                levelUp = userRepository.levelUp((foe.exp+(foe.exp*(user.charisma/100))),user.id)
             }
+            userRepository.toggleCoins(foe.coins+(foe.coins*(user.charisma/100)),user.id)
         }
         Box(
             Modifier.fillMaxSize(),
@@ -220,6 +221,8 @@ fun ArenaScreen(
             ){
                 Column() {
                     Text(text = "You Win")
+                    Text(text = "EXP ${(foe.exp+(foe.exp*(user.charisma/100)))} (${user.charisma}% CHA)")
+                    Text(text = "Coins ${(foe.coins)} (${user.charisma}% CHA)")
                     Button(onClick = {
                         levelPopUp = true
                     }

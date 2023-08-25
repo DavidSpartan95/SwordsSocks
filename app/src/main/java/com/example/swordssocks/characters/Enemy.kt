@@ -6,22 +6,34 @@ import com.example.swordssocks.database.User
 import com.example.swordssocks.gladiator_items.woodSword
 import kotlin.random.Random
 
-fun GenerateFoe():User{
+fun generateFoe(userLevel: Int):User{
+    val stats = randomizeStats(14+(12*userLevel))
     return User(
         name = "Angry Man",
-        health = 1,
-        strength = 5,
-        charisma = 2,
-        defence = 2,
-        magic = 2,
-        coins = 100,
-        exp = 100,
-        level = 1,
+        health = stats[0],
+        strength = stats[1],
+        charisma = 1,
+        defence = stats[2],
+        magic = stats[3],
+        coins = (395*userLevel/7),
+        exp = (64*userLevel/7),
+        level = userLevel,
         draw = randomDrawInstructions(),
         inventory = Inventory(arrayListOf(), arrayListOf(woodSword),arrayListOf())
     )
 }
-
+fun randomizeStats(skillPoints:Int):Array<Int>{
+    var points = skillPoints
+    var stats = arrayOf(1,1,1,1)
+    while (points > 0){
+        val randomNum = Random.nextInt(5)
+        var statsCopy = stats.copyOf()
+        statsCopy[randomNum] = statsCopy[randomNum]+1
+        stats = statsCopy
+        points--
+    }
+    return stats
+}
 fun randomDrawInstructions():DrawInstruction{
 
     return DrawInstruction(

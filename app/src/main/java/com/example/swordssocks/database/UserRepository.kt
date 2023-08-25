@@ -28,8 +28,11 @@ class UserRepository(
     fun toggleCoins(coins:Int, id: Long?){
         appDatabase.userDao().toggleCoins(coins, id)
     }
-    fun levelUp(exp:Int, id: Long?):Boolean{
+    fun levelUp(exp:Int, id: Long?):Pair<Boolean,Int>{
         return appDatabase.userDao().levelUp(exp, id)
+    }
+    fun newStats(id:Long?,HP:Int,atk:Int,def:Int,cha:Int,magic:Int,){
+        appDatabase.userDao().newStats(id,HP,atk,def,cha,magic)
     }
     fun performDatabaseOperation(
         dispatcher: CoroutineDispatcher,

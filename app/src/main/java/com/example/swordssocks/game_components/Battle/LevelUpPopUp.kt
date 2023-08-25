@@ -17,12 +17,15 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.example.swordssocks.R
 import com.example.swordssocks.database.User
+import com.example.swordssocks.database.UserRepository
 import com.example.swordssocks.game_components.CheckButton
 import com.example.swordssocks.game_components.StatButtons
 import com.example.swordssocks.ui.theme.SandPaper
+import kotlinx.coroutines.Dispatchers
+import okhttp3.Dispatcher
 
 @Composable
-fun LevelUpPopUp(user: User, skillPoints:Int, done:()->Unit) {
+fun LevelUpPopUp(userRepository:UserRepository,user: User, skillPoints:Int, done:()->Unit) {
     var points by remember{ mutableStateOf(skillPoints)}
     var statButtonNames by remember{ mutableStateOf(
         arrayOf(
@@ -55,7 +58,7 @@ fun LevelUpPopUp(user: User, skillPoints:Int, done:()->Unit) {
                 Box(
                     Modifier
                         .padding(8.dp)
-                        .heightIn(100.dp)
+                        .height(300.dp)
                         .width(200.dp)
                         .clip(RoundedCornerShape(15.dp))
                         .background(SandPaper)
@@ -117,7 +120,19 @@ fun LevelUpPopUp(user: User, skillPoints:Int, done:()->Unit) {
                     image = Pair(
                         R.drawable.button_check_back,
                         R.drawable.button_check_front
-                    )){done.invoke()}
+                    )){
+                    userRepository.performDatabaseOperation(Dispatchers.IO){
+                        userRepository.newStats(
+                            user.id,
+                            statButtonNames[0].second,
+                            statButtonNames[1].second,
+                            statButtonNames[2].second,
+                            statButtonNames[3].second,
+                            statButtonNames[4].second,
+                        )
+                    }
+                    done.invoke()
+                }
             }
         }
     }

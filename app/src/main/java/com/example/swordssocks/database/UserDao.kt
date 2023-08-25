@@ -20,14 +20,26 @@ interface UserDao {
     @Query("SELECT * FROM User WHERE id = :id")
     fun getById(id:Long?): User
     @Transaction
-    fun levelUp(exp:Int, id:Long?):Boolean{
+    fun newStats(id:Long?,HP:Int,atk:Int,def:Int,cha:Int,magic:Int,){
+        val user = getById(id)
+        user.health = HP
+        user.strength = atk
+        user.defence = def
+        user.charisma = cha
+        user.magic = magic
+        updateExistingUser(user)
+    }
+    @Transaction
+    fun levelUp(exp:Int, id:Long?):Pair<Boolean,Int>{
         val user = getById(id)
         var levelUp = false
+        var levelUpNum = 0
         user.exp += exp
         println(user.exp)
         while (true){
             if (user.exp >= ((user.level+1)*(user.level+1)*(user.level+1))){
                 user.level++
+                levelUpNum++
                 println("to Next level${user.level*user.level*user.level}")
                 levelUp = true
                 println(user.level)
@@ -36,7 +48,7 @@ interface UserDao {
             }
         }
         updateExistingUser(user)
-        return levelUp
+        return Pair(levelUp,levelUpNum)
     }
     @Transaction
     fun toggleWeapon(weapon:Weapon, id:Long?, order:String){
