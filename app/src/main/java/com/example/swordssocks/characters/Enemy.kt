@@ -12,9 +12,9 @@ fun generateFoe(userLevel: Int):User{
         name = "Angry Man",
         health = stats[0],
         strength = stats[1],
-        charisma = 1,
-        defence = stats[2],
-        magic = stats[3],
+        charisma = stats[2],
+        defence = stats[3],
+        magic = stats[4],
         coins = (395*userLevel/7),
         exp = (64*userLevel/7),
         level = userLevel,
@@ -24,7 +24,7 @@ fun generateFoe(userLevel: Int):User{
 }
 fun randomizeStats(skillPoints:Int):Array<Int>{
     var points = skillPoints
-    var stats = arrayOf(1,1,1,1)
+    var stats = arrayOf(1,1,1,1,1)
     while (points > 0){
         val randomNum = Random.nextInt(5)
         var statsCopy = stats.copyOf()

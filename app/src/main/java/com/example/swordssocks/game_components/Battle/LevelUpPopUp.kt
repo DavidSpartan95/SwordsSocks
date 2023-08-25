@@ -21,7 +21,9 @@ import com.example.swordssocks.database.UserRepository
 import com.example.swordssocks.game_components.CheckButton
 import com.example.swordssocks.game_components.StatButtons
 import com.example.swordssocks.ui.theme.SandPaper
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.Dispatcher
 
 @Composable
@@ -130,8 +132,10 @@ fun LevelUpPopUp(userRepository:UserRepository,user: User, skillPoints:Int, done
                             statButtonNames[3].second,
                             statButtonNames[4].second,
                         )
+                        CoroutineScope(Dispatchers.Main).launch {
+                            done.invoke()
+                        }
                     }
-                    done.invoke()
                 }
             }
         }

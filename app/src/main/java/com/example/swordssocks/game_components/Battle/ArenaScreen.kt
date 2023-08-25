@@ -23,8 +23,10 @@ import com.example.swordssocks.nav_graph.Screen
 import com.example.swordssocks.ui.theme.HitCharacterAnimation
 import com.example.swordssocks.ui.theme.SandPaper
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun ArenaScreen(
@@ -186,48 +188,62 @@ fun ArenaScreen(
         }
     }else if(gameOver.first && gameOver.second == "win"){
         if (levelPopUp){
-            LevelUpPopUp(userRepository,user = user, skillPoints = (12*levelUp.second)) {
-                levelPopUp = false
-                val userJson = Gson().toJson(user)
-                navController.navigate(route = "town_screen/$userJson") {
-                    popUpTo(Screen.Arena.route) {
-                        inclusive = true
+            Box(
+                Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                LevelUpPopUp(userRepository,user = user, skillPoints = (12*levelUp.second)) {
+                    levelPopUp = false
+                    userRepository.performDatabaseOperation(Dispatchers.IO){
+                        val userJson = Gson().toJson(userRepository.getById(user.id))
+                        CoroutineScope(Dispatchers.Main).launch {
+                            navController.navigate(route = "town_screen/$userJson") {
+                                popUpTo(Screen.Arena.route) {
+                                    inclusive = true
+                                }
+                            }
+                        }
                     }
                 }
             }
-        }
-        userRepository.performDatabaseOperation(Dispatchers.IO){
-            if (!levelUp.first){
-                levelUp = userRepository.levelUp((foe.exp+(foe.exp*(user.charisma/100))),user.id)
+        }else{
+            userRepository.performDatabaseOperation(Dispatchers.IO){
+                if (!levelUp.first){
+                    levelUp = userRepository.levelUp((foe.exp+(foe.exp*(user.charisma/100))),user.id)
+                }
+                userRepository.toggleCoins(foe.coins+(foe.coins*(user.charisma/100)),user.id)
             }
-            userRepository.toggleCoins(foe.coins+(foe.coins*(user.charisma/100)),user.id)
-        }
-        Box(
-            Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
             Box(
-                Modifier
-                    .heightIn(100.dp)
-                    .width(100.dp)
-                    .clip(RoundedCornerShape(15.dp))
-                    .background(SandPaper)
-                    .border(
-                        width = 2.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(15.dp)
-                    ),
-                contentAlignment = Alignment.Center,
-            ){
-                Column() {
-                    Text(text = "You Win")
-                    Text(text = "EXP ${(foe.exp+(foe.exp*(user.charisma/100)))} (${user.charisma}% CHA)")
-                    Text(text = "Coins ${(foe.coins)} (${user.charisma}% CHA)")
-                    Button(onClick = {
-                        levelPopUp = true
-                    }
-                    ) {
-                        Text(text = "OK")
+                Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    Modifier
+                        .height(250.dp)
+                        .width(300.dp)
+                        .clip(RoundedCornerShape(15.dp))
+                        .background(SandPaper)
+                        .border(
+                            width = 2.dp,
+                            color = Color.Black,
+                            shape = RoundedCornerShape(15.dp)
+                        ),
+                    contentAlignment = Alignment.Center,
+                ){
+                    Column() {
+                        Text(text = "You Win")
+                        Text(text = "EXP ${(foe.exp+(foe.exp*(user.charisma/100)))} (${user.charisma}% CHA)")
+                        Text(text = "Coins ${(foe.coins)} (${user.charisma}% CHA)")
+                        Button(onClick = {
+                            if (levelUp.first){
+                                levelPopUp = true
+                            }else{
+
+                            }
+                        }
+                        ) {
+                            Text(text = "OK")
+                        }
                     }
                 }
             }
