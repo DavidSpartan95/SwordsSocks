@@ -28,7 +28,6 @@ import com.example.swordssocks.ui.theme.SandColor
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 
-
 @Composable
 fun TownScreen(
     navController: NavHostController,
@@ -38,9 +37,8 @@ fun TownScreen(
     var shop:Pair<Boolean,String> by remember { mutableStateOf(Pair(false,"")) }
     val scrollState = rememberScrollState(239)
     var user by remember { mutableStateOf(userEnter) }
-    var coins by remember { mutableStateOf(userEnter.coins) }
 
-    LaunchedEffect(shop){
+    LaunchedEffect(shop,user){
         if (user.id == null){
             val userList = retrieveAllUsers(userRepository)
             user = userList[userList.size-1]
@@ -138,7 +136,7 @@ fun TownScreen(
                     CircleButton(picture = R.drawable.button_cancel_back, text = "Coins++"){
                         userRepository.performDatabaseOperation(Dispatchers.IO){
                             userRepository.toggleCoins(99999,user.id)
-                            coins+= 99999
+
                         }
                     }
                     Box(Modifier
@@ -155,7 +153,7 @@ fun TownScreen(
                         Alignment.Center
                     ){
                         Text(
-                            text = "Level: ${user.level} Coins:${coins}",
+                            text = "Level: ${user.level} Coins:${user.coins}",
                             fontWeight = FontWeight.Bold,
                         )
                     }

@@ -40,9 +40,7 @@ interface UserDao {
             if (user.exp >= ((user.level+1)*(user.level+1)*(user.level+1))){
                 user.level++
                 levelUpNum++
-                println("to Next level${user.level*user.level*user.level}")
                 levelUp = true
-                println(user.level)
             }else{
                 break
             }

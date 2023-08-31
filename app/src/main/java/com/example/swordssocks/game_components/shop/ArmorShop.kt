@@ -188,7 +188,6 @@ val armorShop = arrayOf(
     ironChestplate,
     goldChestplate,
     leatherHelmet,
-    //ironHelmet,
     goldHelmet,
     leatherLeggings,
     ironLeggings,

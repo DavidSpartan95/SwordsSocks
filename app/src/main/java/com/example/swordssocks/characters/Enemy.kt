@@ -3,6 +3,10 @@ package com.example.swordssocks.characters
 import com.example.swordssocks.database.DrawInstruction
 import com.example.swordssocks.database.Inventory
 import com.example.swordssocks.database.User
+import com.example.swordssocks.game_components.shop.armorShop
+import com.example.swordssocks.game_components.shop.weaponArray
+import com.example.swordssocks.gladiator_items.Armor
+import com.example.swordssocks.gladiator_items.Weapon
 import com.example.swordssocks.gladiator_items.woodSword
 import kotlin.random.Random
 
@@ -19,9 +23,10 @@ fun generateFoe(userLevel: Int):User{
         exp = (64*userLevel/7),
         level = userLevel,
         draw = randomDrawInstructions(),
-        inventory = Inventory(arrayListOf(), arrayListOf(woodSword),arrayListOf())
+        inventory = randomizeInventory(userLevel)
     )
 }
+
 fun randomizeStats(skillPoints:Int):Array<Int>{
     var points = skillPoints
     var stats = arrayOf(1,1,1,1,1)
@@ -43,5 +48,41 @@ fun randomDrawInstructions():DrawInstruction{
         mouths[Random.nextInt(mouths.size)],
         skins[Random.nextInt(skins.size)]
     )
+}
 
+fun randomizeInventory(level: Int):Inventory{
+    var coins = 100
+    var levelLoop = 1
+    var exp = 0
+    while (levelLoop < level){
+        coins += (395*levelLoop/7)
+        exp += (64*levelLoop/7)
+        while (true){
+            if (exp >= ((levelLoop+1)*(levelLoop+1)*(levelLoop+1))){
+                levelLoop++
+            }else{
+                break
+            }
+        }
+    }
+
+    var randomWeaponArray:ArrayList<Weapon> = arrayListOf()
+    while (true){
+        val i = Random.nextInt(weaponArray.size)
+        if (weaponArray[i].price <= coins){
+            coins -=weaponArray[i].price
+            randomWeaponArray += weaponArray[i]
+            break
+        }
+    }
+    var randomArmorArray:ArrayList<Armor> = arrayListOf()
+    while (coins >= 100){
+        val i = Random.nextInt(armorShop.size)
+        if (armorShop[i].price <= coins){
+            coins -= armorShop[i].price
+            randomArmorArray += armorShop[i]
+        }
+    }
+
+    return Inventory(arrayListOf(), randomWeaponArray,randomArmorArray)
 }

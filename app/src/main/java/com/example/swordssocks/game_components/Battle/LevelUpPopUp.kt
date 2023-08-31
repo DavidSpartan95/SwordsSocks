@@ -86,7 +86,7 @@ fun LevelUpPopUp(userRepository:UserRepository,user: User, skillPoints:Int, done
                                     }
                                 },
                                 plus = {
-                                    if (points > 0){
+                                    if (points > 0 && skill.second > 0){
                                         val updatedArray = statButtonNames.copyOf()
                                         updatedArray[index] = Pair(skill.first, skill.second+1)
                                         statButtonNames = updatedArray

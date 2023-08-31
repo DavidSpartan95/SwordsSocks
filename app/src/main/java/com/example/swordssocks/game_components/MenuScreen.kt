@@ -21,12 +21,19 @@ import com.example.swordssocks.nav_graph.Screen
 import com.example.swordssocks.ui.theme.DarkOrange
 import com.example.swordssocks.ui.theme.DarkRed
 import com.example.swordssocks.ui.theme.SandPaper
+import com.google.accompanist.systemuicontroller.SystemUiController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun MenuScreen(
     navController: NavHostController,
     userRepository: UserRepository
 ) {
+    val systemUiController: SystemUiController = rememberSystemUiController()
+
+    systemUiController.isStatusBarVisible = false // Status bar
+    systemUiController.isNavigationBarVisible = false // Navigation bar
+    systemUiController.isSystemBarsVisible = false // Status & Navigation bars
     Box(
         Modifier.fillMaxWidth().background(Color.Black),
         //horizontalAlignment = Alignment.CenterHorizontally

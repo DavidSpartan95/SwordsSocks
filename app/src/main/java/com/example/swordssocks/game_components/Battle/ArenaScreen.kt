@@ -5,12 +5,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.swordssocks.characters.generateFoe
@@ -18,16 +20,17 @@ import com.example.swordssocks.database.User
 import com.example.swordssocks.database.UserRepository
 import com.example.swordssocks.game_components.Battle.LevelUpPopUp
 import com.example.swordssocks.game_components.Battle.findAllPotions
+import com.example.swordssocks.game_components.Battle.playerArmorValue
 import com.example.swordssocks.gladiator_items.smallPotion
 import com.example.swordssocks.nav_graph.Screen
-import com.example.swordssocks.ui.theme.HitCharacterAnimation
-import com.example.swordssocks.ui.theme.SandPaper
+import com.example.swordssocks.ui.theme.*
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+class ButtonInfo(var position:Alignment, var color:Color)
 @Composable
 fun ArenaScreen(
     navController: NavHostController,
@@ -45,18 +48,20 @@ fun ArenaScreen(
     var attNumFoe by remember { mutableStateOf(0) }
     var buttonSelect: Int by remember { mutableStateOf(0) }
     var HP by remember { mutableStateOf(user.health*2+10) }
+    var armor by remember { mutableStateOf(playerArmorValue(user)) }
+    var foeArmor by remember { mutableStateOf(playerArmorValue(foe)) }
     var foeHP by remember { mutableStateOf(foe.health*2+10) }
 
     val allButtons = arrayOf(
         arrayOf(
-            Triple("Fight",Alignment.TopStart)
+            Triple("Fight",ButtonInfo(Alignment.TopStart,Color.Red))
             {
                 buttonSelect = 1
             },
-            Triple("Potions",Alignment.TopEnd){
+            Triple("Potions",ButtonInfo(Alignment.TopEnd,DarkGreen)){
                 buttonSelect = 2
             },
-            Triple("Run away",Alignment.BottomStart){
+            Triple("Run away",ButtonInfo(Alignment.BottomStart,Color.Blue)){
                 val userJson = Gson().toJson(user)
                 navController.navigate(route = "town_screen/$userJson"){
                     popUpTo(Screen.Arena.route){
@@ -64,32 +69,30 @@ fun ArenaScreen(
                     }
                 }
             },
-            Triple("Do Nothing",Alignment.BottomEnd){
-            }
     ),
         arrayOf(
-            Triple("Light Attack ${user.inventory.meleeWeapons[0].acc*1} %",Alignment.TopStart)
+            Triple("Light Attack ${user.inventory.meleeWeapons[0].acc*1} %",ButtonInfo(Alignment.TopStart,Color.Red))
             {
                 attNumUser++
                 attack= Pair(true,user.inventory.meleeWeapons[0].element)
                 damage=user.inventory.meleeWeapons[0].attack(user,foe,1.0,1.0)
             },
-            Triple("Normal Attack ${user.inventory.meleeWeapons[0].acc*0.9} %",Alignment.TopEnd){
+            Triple("Normal Attack ${user.inventory.meleeWeapons[0].acc*0.9} %",ButtonInfo(Alignment.TopEnd,DarkGreen)){
                 attNumUser++
                 attack= Pair(true,user.inventory.meleeWeapons[0].element)
                 damage=user.inventory.meleeWeapons[0].attack(user,foe,0.9,1.40)
             },
-            Triple("Heavy Attack ${user.inventory.meleeWeapons[0].acc*0.8} %",Alignment.BottomStart){
+            Triple("Heavy Attack ${user.inventory.meleeWeapons[0].acc*0.8} %",ButtonInfo(Alignment.BottomStart,Color.Blue)){
                 attNumUser++
                 attack= Pair(true,user.inventory.meleeWeapons[0].element)
                 damage=user.inventory.meleeWeapons[0].attack(user,foe,0.8,1.75)
             },
-            Triple("Back",Alignment.BottomEnd){
+            Triple("Back",ButtonInfo(Alignment.BottomEnd,DarkOrange)){
                 buttonSelect = 0
             }
         ),
         arrayOf(
-            Triple("small potion(${potions.first})",Alignment.TopStart)
+            Triple("small potion(${potions.first})",ButtonInfo(Alignment.TopStart,Color.Red))
             {
                 if (potions.first > 0) {
                     if (smallPotion.heal((user.health*2+10))+HP > (user.health*2+10)){
@@ -101,13 +104,13 @@ fun ArenaScreen(
                     attack = Pair(true,"heal")
                 }
             },
-            Triple("medium potion(${potions.second})",Alignment.TopEnd){
+            Triple("medium potion(${potions.second})",ButtonInfo(Alignment.TopEnd,DarkGreen)){
 
             },
-            Triple("large potion(${potions.third})",Alignment.BottomStart){
+            Triple("large potion(${potions.third})",ButtonInfo(Alignment.BottomStart,Color.Blue)){
 
             },
-            Triple("Back",Alignment.BottomEnd){
+            Triple("Back",ButtonInfo(Alignment.BottomEnd,DarkOrange)){
                 buttonSelect = 0
             }
         ),
@@ -118,19 +121,30 @@ fun ArenaScreen(
     LaunchedEffect(buttonSelect,attack){
         if (!gameOver.first){
             if (attack.first && attack.second != "heal" && attack.second != ""){
-                foeHP -= damage.second
+                if (foeArmor > 0){
+                    foeArmor -= damage.second
+                }else{
+                    foeHP -= damage.second
+                }
                 buttons = allButtons[3]
                 delay(1000)
-                if (foeHP <= 0) gameOver = Pair(true,"win")
-                //Foe Attack
-                attNumFoe++
-                attack= Pair(true,foe.inventory.meleeWeapons[0].element)
-                damage=user.inventory.meleeWeapons[0].attack(foe,user,1.0,1.0)
-                HP -= damage.second
-                delay(1000)
-                if (HP <= 0) gameOver = Pair(true,"lose")
-                buttons = allButtons[0]
-                attack = Pair(false,"")
+                if (foeHP <= 0){
+                    gameOver = Pair(true,"win")
+                }else{
+                    //Foe Attack
+                    attNumFoe++
+                    attack= Pair(true,foe.inventory.meleeWeapons[0].element)
+                    damage=user.inventory.meleeWeapons[0].attack(foe,user,1.0,1.0)
+                    if (armor > 0){
+                        armor -= damage.second
+                    }else{
+                        HP -= damage.second
+                    }
+                    delay(1000)
+                    if (HP <= 0) gameOver = Pair(true,"lose")
+                    buttons = allButtons[0]
+                    attack = Pair(false,"")
+                }
             }
             if (attack.first && attack.second == "heal"){
                 attNumFoe++
@@ -156,19 +170,19 @@ fun ArenaScreen(
             Row(Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = "HP $HP")
+                    HP_bar(currentHP = HP, maxHP = (user.health*2+10), armor, playerArmorValue(user))
                     HitCharacterAnimation(attack,attNumFoe,damage,user)
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = "HP $foeHP")
+                    HP_bar(currentHP = foeHP, maxHP = (foe.health*2+10), foeArmor, playerArmorValue(foe))
                     HitCharacterAnimation(attack,attNumUser,damage,foe)
                 }
             }
             Box(
                 Modifier
                     .width(400.dp)
-                    .fillMaxHeight()
-                    .background(Color.Black)
+                    .height(300.dp)
+                    .background(SandColor)
                     .border(width = 1.dp, color = Color.White,)
             ) {
 
@@ -178,9 +192,10 @@ fun ArenaScreen(
                         Modifier
                             .fillMaxHeight(0.5f)
                             .fillMaxWidth(0.5f)
-                            .align(x.second)
+                            .align(x.second.position),
+                        colors = ButtonDefaults.buttonColors(backgroundColor = x.second.color)
                     ) {
-                        Text(text = x.first)
+                        Text(text = x.first, fontWeight = FontWeight.Bold, color = Color.White)
                     }
                 }
 
@@ -281,5 +296,47 @@ fun ArenaScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun HP_bar(currentHP:Int, maxHP:Int, currentArmor: Int, maxArmor: Int) {
+
+    val greenBar = ((currentHP.toDouble()/maxHP.toDouble())*100)
+    val greyBar = ((currentArmor.toDouble()/maxArmor.toDouble())*100)
+    var armorBarColor = Color.Gray
+    var armorTextColor = Color.White
+
+    if ( currentArmor <= 0){
+        armorBarColor = SandColor
+        armorTextColor = SandColor
+    }
+        Box() {
+            Box(
+                Modifier
+                    .width(greyBar.dp)
+                    .height(20.dp)
+                    .background(armorBarColor)
+            ) {
+
+            }
+            Text(text = currentArmor.toString(), Modifier.align(Alignment.Center), color = armorTextColor)
+        }
+
+    Box() {
+        Box(
+            Modifier
+                .width(100.dp)
+                .height(20.dp)
+                .background(Color.Gray)) {
+
+        }
+        Box(
+            Modifier
+                .width(greenBar.dp)
+                .height(20.dp)
+                .background(Color.Green)) {
+        }
+        Text(text = currentHP.toString(), Modifier.align(Alignment.Center))
     }
 }

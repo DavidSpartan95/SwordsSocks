@@ -13,6 +13,9 @@ class UserRepository(
     fun addUser(user: User) {
         appDatabase.userDao().insertUser(user)
     }
+    fun deleteUser(user: User) {
+        appDatabase.userDao().deleteUser(user)
+    }
     fun listAllUsers():List<User>{
         return appDatabase.userDao().getAllUsers()
     }
