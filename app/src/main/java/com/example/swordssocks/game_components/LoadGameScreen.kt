@@ -3,6 +3,7 @@ package com.example.swordssocks.game_components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -73,51 +74,66 @@ fun LoadGameScreen(
             Text("Go Back", color = Color.White)
         }
         saveFiles?.let{
-            for (x in saveFiles!!){
-                Column(modifier = Modifier
-                    .background(SandColor)
-                    .fillMaxWidth()
-                    .padding(2.dp)
-                    .border(width = 5.dp, color = DarkOrange, shape = RoundedCornerShape(8.dp))
-                    .padding(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ){
+                items(saveFiles!!.size) { index ->
+                    Column(
+                        modifier = Modifier
+                            .background(SandColor)
+                            .fillMaxWidth()
+                            .padding(2.dp)
+                            .border(
+                                width = 5.dp,
+                                color = DarkOrange,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Button(onClick = {
-                            userToDelete = x
-                            popUp = true
-                        },
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(text = "DELETE",color = Color.White)
-                        }
-
-                        Button(onClick = {
-
-                        },
-                            colors = ButtonDefaults.buttonColors(backgroundColor = DarkOrange)
-                        ) {
-                            Text(text = "${x.name} level: ${x.level}", fontSize = 30.sp, color = Color.White)
-                        }
-                        Button(onClick = {
-                            val userJson = Gson().toJson(x)
-                            navController.navigate(route = "town_screen/$userJson"){
-                                popUpTo(Screen.Load.route){
-                                    inclusive = true
-                                }
+                            Button(
+                                onClick = {
+                                    userToDelete = saveFiles!![index]
+                                    popUp = true
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+                            ) {
+                                Text(text = "DELETE", color = Color.White)
                             }
-                        },
-                            colors = ButtonDefaults.buttonColors(backgroundColor = DarkGreen)
-                        ) {
-                            Text(text = "LOAD", color = Color.White)
+
+                            Button(
+                                onClick = {
+
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = DarkOrange)
+                            ) {
+                                Text(
+                                    text = "${saveFiles!![index].name} level: ${saveFiles!![index].level}",
+                                    fontSize = 30.sp,
+                                    color = Color.White
+                                )
+                            }
+                            Button(
+                                onClick = {
+                                    val userJson = Gson().toJson(saveFiles!![index])
+                                    navController.navigate(route = "town_screen/$userJson") {
+                                        popUpTo(Screen.Load.route) {
+                                            inclusive = true
+                                        }
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = DarkGreen)
+                            ) {
+                                Text(text = "LOAD", color = Color.White)
+                            }
                         }
                     }
                 }
-
             }
             if (saveFiles!!.isEmpty()){
                 Box(

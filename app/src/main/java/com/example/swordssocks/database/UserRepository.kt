@@ -1,5 +1,6 @@
 package com.example.swordssocks.database
 
+import com.example.swordssocks.gladiator_items.Potion
 import com.example.swordssocks.gladiator_items.Weapon
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -9,7 +10,6 @@ class UserRepository(
     private val appDatabase: AppDatabase,
     private val coroutineScope: CoroutineScope
 ) {
-
     fun addUser(user: User) {
         appDatabase.userDao().insertUser(user)
     }
@@ -21,6 +21,9 @@ class UserRepository(
     }
     fun toggleWeapon(newWeapon: Weapon, id:Long?, order:String){
         appDatabase.userDao().toggleWeapon(newWeapon,id,order)
+    }
+    fun togglePotion(potion: Potion, id:Long?, order:String){
+        appDatabase.userDao().togglePotion(potion,id,order)
     }
     fun getById(id:Long?):User{
         return appDatabase.userDao().getById(id)

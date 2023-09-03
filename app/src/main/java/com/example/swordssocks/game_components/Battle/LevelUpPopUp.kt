@@ -38,6 +38,15 @@ fun LevelUpPopUp(userRepository:UserRepository,user: User, skillPoints:Int, done
             Pair("Magic",user.magic),
         )
     ) }
+    val userStats by remember{ mutableStateOf(
+        arrayOf(
+            Pair("Health",user.health),
+            Pair("Strength",user.strength),
+            Pair("Charisma",user.charisma),
+            Pair("Defence",user.defence),
+            Pair("Magic",user.magic),
+        )
+    )}
     Popup(alignment = Alignment.Center) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -78,7 +87,7 @@ fun LevelUpPopUp(userRepository:UserRepository,user: User, skillPoints:Int, done
                                 text = skill.first,
                                 points = skill.second,
                                 minus = {
-                                    if (points != skillPoints){
+                                    if (statButtonNames[index].second > userStats[index].second && skillPoints != points){
                                         val updatedArray = statButtonNames.copyOf()
                                         updatedArray[index] = Pair(skill.first, skill.second-1)
                                         statButtonNames = updatedArray

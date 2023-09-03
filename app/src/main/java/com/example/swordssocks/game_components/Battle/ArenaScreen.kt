@@ -21,6 +21,8 @@ import com.example.swordssocks.database.UserRepository
 import com.example.swordssocks.game_components.Battle.LevelUpPopUp
 import com.example.swordssocks.game_components.Battle.findAllPotions
 import com.example.swordssocks.game_components.Battle.playerArmorValue
+import com.example.swordssocks.gladiator_items.largePotion
+import com.example.swordssocks.gladiator_items.mediumPotion
 import com.example.swordssocks.gladiator_items.smallPotion
 import com.example.swordssocks.nav_graph.Screen
 import com.example.swordssocks.ui.theme.*
@@ -95,6 +97,9 @@ fun ArenaScreen(
             Triple("small potion(${potions.first})",ButtonInfo(Alignment.TopStart,Color.Red))
             {
                 if (potions.first > 0) {
+                    userRepository.performDatabaseOperation(Dispatchers.IO){
+                        userRepository.togglePotion(smallPotion,user.id,"remove")
+                    }
                     if (smallPotion.heal((user.health*2+10))+HP > (user.health*2+10)){
                         HP = user.health*2+10
                     }else{
@@ -102,12 +107,39 @@ fun ArenaScreen(
                     }
                     damage = Pair(false,-smallPotion.heal((user.health*2+10)))
                     attack = Pair(true,"heal")
+                    potions = Triple(potions.first-1,potions.second,potions.third)
                 }
             },
             Triple("medium potion(${potions.second})",ButtonInfo(Alignment.TopEnd,DarkGreen)){
+                if (potions.second > 0) {
+                    userRepository.performDatabaseOperation(Dispatchers.IO){
+                        userRepository.togglePotion(mediumPotion,user.id,"remove")
+                    }
+                    if (mediumPotion.heal((user.health*2+10))+HP > (user.health*2+10)){
+                        HP = user.health*2+10
+                    }else{
+                        HP += mediumPotion.heal((user.health*2+10))
+                    }
+                    damage = Pair(false,-mediumPotion.heal((user.health*2+10)))
+                    attack = Pair(true,"heal")
+                    potions = Triple(potions.first,potions.second-1,potions.third)
+                }
 
             },
             Triple("large potion(${potions.third})",ButtonInfo(Alignment.BottomStart,Color.Blue)){
+                if (potions.third > 0) {
+                    userRepository.performDatabaseOperation(Dispatchers.IO){
+                        userRepository.togglePotion(largePotion,user.id,"remove")
+                    }
+                    if (largePotion.heal((user.health*2+10))+HP > (user.health*2+10)){
+                        HP = user.health*2+10
+                    }else{
+                        HP += largePotion.heal((user.health*2+10))
+                    }
+                    damage = Pair(false,-largePotion.heal((user.health*2+10)))
+                    attack = Pair(true,"heal")
+                    potions = Triple(potions.first,potions.second,potions.third-1)
+                }
 
             },
             Triple("Back",ButtonInfo(Alignment.BottomEnd,DarkOrange)){
@@ -245,17 +277,27 @@ fun ArenaScreen(
                         ),
                     contentAlignment = Alignment.Center,
                 ){
-                    Column() {
-                        Text(text = "You Win")
-                        Text(text = "EXP ${(foe.exp+(foe.exp*(user.charisma/100)))} (${user.charisma}% CHA)")
-                        Text(text = "Coins ${(foe.coins)} (${user.charisma}% CHA)")
+                    Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(text = "You Win", fontWeight = FontWeight.Bold )
+                        Text(text = "EXP ${(foe.exp+(foe.exp*(user.charisma/100)))} (${user.charisma}% CHA)" , fontWeight = FontWeight.Bold)
+                        Text(text = "Coins ${(foe.coins)} (${user.charisma}% CHA)", fontWeight = FontWeight.Bold)
                         Button(onClick = {
                             if (levelUp.first){
                                 levelPopUp = true
                             }else{
-
+                                userRepository.performDatabaseOperation(Dispatchers.IO){
+                                    val userJson = Gson().toJson(userRepository.getById(user.id))
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        navController.navigate(route = "town_screen/$userJson") {
+                                            popUpTo(Screen.Arena.route) {
+                                                inclusive = true
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                        }
+                        },
+                            //colors = ButtonDefaults.buttonColors(backgroundColor = DarkOrange)
                         ) {
                             Text(text = "OK")
                         }

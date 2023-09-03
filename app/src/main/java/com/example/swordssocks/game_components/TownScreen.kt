@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -26,7 +27,6 @@ import com.example.swordssocks.game_components.shop.WeaponPopup
 import com.example.swordssocks.nav_graph.Screen
 import com.example.swordssocks.ui.theme.SandColor
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun TownScreen(
@@ -34,11 +34,11 @@ fun TownScreen(
     userRepository: UserRepository,
     userEnter: User,
 ) {
-    var shop:Pair<Boolean,String> by remember { mutableStateOf(Pair(false,"")) }
+    var popUp:Pair<Boolean,String> by remember { mutableStateOf(Pair(false,"")) }
     val scrollState = rememberScrollState(239)
     var user by remember { mutableStateOf(userEnter) }
 
-    LaunchedEffect(shop,user){
+    LaunchedEffect(popUp,user){
         if (user.id == null){
             val userList = retrieveAllUsers(userRepository)
             user = userList[userList.size-1]
@@ -51,26 +51,33 @@ fun TownScreen(
     ) {
         //This box paints the Town
         Box() {
-            if (shop.first){
-                when(shop.second){
+            if (popUp.first){
+                when(popUp.second){
                     "weapon" -> {
                         Box(Modifier.align(Alignment.Center)) {
                             WeaponPopup(user,userRepository){
-                                shop = Pair(false,"")
+                                popUp = Pair(false,"")
                             }
                         }
                     }
                     "armor" -> {
                         Box(Modifier.align(Alignment.Center)) {
                             ArmorPopup(user,userRepository){
-                                shop = Pair(false,"")
+                                popUp = Pair(false,"")
                             }
                         }
                     }
                     "mage" -> {
                         Box(Modifier.align(Alignment.Center)) {
                             MagePopup(user,userRepository){
-                                shop = Pair(false,"")
+                                popUp = Pair(false,"")
+                            }
+                        }
+                    }
+                    "info" -> {
+                        Box(Modifier.align(Alignment.Center)) {
+                            InfoPopUp(user){
+                                popUp = Pair(false,"")
                             }
                         }
                     }
@@ -93,7 +100,7 @@ fun TownScreen(
                 contentDescription = null
             )
             user?.let {
-                Box(modifier = Modifier.align(Alignment.BottomCenter)) {
+                Box(modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 50.dp)) {
                     CharacterDisplay(
                         hairColor = ColorFilter.tint(user.draw.hairColor),
                         user = user,
@@ -105,10 +112,32 @@ fun TownScreen(
             }
         }
     }
-    if(!shop.first){
+    if(!popUp.first){
         Box(Modifier.fillMaxSize()) {
 
             Box(Modifier.align(Alignment.TopCenter)) {
+                Box(Modifier
+                    .width(200.dp)
+                    .height(50.dp)
+                    .padding(end = 10.dp, top = 10.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .background(SandColor)
+                    .border(
+                        width = 2.dp,
+                        color = Color.Black,
+                        shape = RoundedCornerShape(15.dp)
+                    ).clickable {
+                                popUp = Pair(true,"info")
+                    },
+                    Alignment.Center
+                ){
+                    Text(
+                        text = "Level: ${user.level} Coins:${user.coins}",
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
+            Box(Modifier.align(Alignment.BottomCenter)) {
 
                 Row() {
                     CircleButton(picture = R.drawable.button_battle, text = ""){
@@ -119,13 +148,13 @@ fun TownScreen(
                             }}
                     }
                     CircleButton(picture = R.drawable.button_weaponshop, text = ""){
-                        shop = Pair(true,"weapon")
+                        popUp = Pair(true,"weapon")
                     }
                     CircleButton(picture = R.drawable.button_armorshop, text = ""){
-                        shop = Pair(true,"armor")
+                        popUp = Pair(true,"armor")
                     }
                     CircleButton(picture = R.drawable.button_magic, text = ""){
-                        shop = Pair(true,"mage")
+                        popUp = Pair(true,"mage")
                     }
                     CircleButton(picture = R.drawable.button_exit, text = ""){
                         navController.navigate(route = "home_screen"){
@@ -133,30 +162,12 @@ fun TownScreen(
                                 inclusive = true
                             }}
                     }
-                    CircleButton(picture = R.drawable.button_cancel_back, text = "Coins++"){
+                   /* CircleButton(picture = R.drawable.button_cancel_back, text = "Coins++"){
                         userRepository.performDatabaseOperation(Dispatchers.IO){
                             userRepository.toggleCoins(99999,user.id)
 
                         }
-                    }
-                    Box(Modifier
-                        .width(200.dp)
-                        .height(50.dp)
-                        .padding(end = 10.dp, top = 10.dp)
-                        .clip(RoundedCornerShape(15.dp))
-                        .background(SandColor)
-                        .border(
-                            width = 2.dp,
-                            color = Color.Black,
-                            shape = RoundedCornerShape(15.dp)
-                        ),
-                        Alignment.Center
-                    ){
-                        Text(
-                            text = "Level: ${user.level} Coins:${user.coins}",
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
+                    }*/
                 }
             }
         }
