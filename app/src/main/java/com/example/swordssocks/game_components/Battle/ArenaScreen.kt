@@ -1,5 +1,6 @@
 package com.example.swordssocks.game_components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -166,8 +167,8 @@ fun ArenaScreen(
                 }else{
                     //Foe Attack
                     attNumFoe++
-                    attack= Pair(true,foe.inventory.meleeWeapons[0].element)
                     damage=user.inventory.meleeWeapons[0].attack(foe,user,1.0,1.0)
+                    Log.d("ATK", "my Message")
                     if (armor > 0){
                         armor -= damage.second
                     }else{
@@ -175,18 +176,23 @@ fun ArenaScreen(
                     }
                     delay(1000)
                     if (HP <= 0) gameOver = Pair(true,"lose")
-                    buttons = allButtons[0]
                     attack = Pair(false,"")
+                    buttons = allButtons[0]
                 }
             }
             if (attack.first && attack.second == "heal"){
+                Log.d("Heal", "my Message")
                 attNumFoe++
                 buttons = allButtons[3]
                 delay(1000)
                 //Foe attack
                 attNumFoe++
                 damage=user.inventory.meleeWeapons[0].attack(foe,user,1.0,1.0)
-                HP -= damage.second
+                if (armor > 0){
+                    armor -= damage.second
+                }else{
+                    HP -= damage.second
+                }
                 delay(1000)
                 if (HP <= 0) gameOver = Pair(true,"lose")
                 buttons = allButtons[0]

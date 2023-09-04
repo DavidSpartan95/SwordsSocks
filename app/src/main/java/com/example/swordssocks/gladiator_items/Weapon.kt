@@ -27,18 +27,18 @@ class Weapon(
                 return Pair(isCrit,(baseDamage * randomMultiplier*damageModifier*criticalMultiplier).toInt())
             }
             return Pair(false,0)
-        }else{
+        }else if (element != ""){
             val isHit = Random.nextInt(101) <= (acc)*accModifier
             if (isHit) {
                 val isCrit = Random.nextInt(101) <= criticalChance
                 val criticalMultiplier = if (isCrit) 2 else 1
                 val randomMultiplier = Random.nextDouble(217.0, 256.0) / 255
                 val baseDamage =
-                    ((2 * user.level * criticalMultiplier / 5 + 2) * power * user.magic / foe.magic) / 50 + 2
+                    ((2 * user.level / 5 + 2) * power * user.magic / foe.magic) / 50 + 2
                 return Pair(isCrit,(baseDamage * randomMultiplier*damageModifier*criticalMultiplier).toInt())
             }
             return Pair(false,0)
-        }
+        }else return Pair(false,0)
     }
 }
 
@@ -157,7 +157,7 @@ val staffGarnet = Weapon(
     1000
 )
 val staffDiamond = Weapon(
-    "Amber Staff",
+    "Diamond Staff",
     70,
     100,
     "spark",
