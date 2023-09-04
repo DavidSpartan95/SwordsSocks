@@ -39,6 +39,7 @@ fun ArenaScreen(
     userRepository: UserRepository,
     user: User
 ) {
+    var receivedEXP by remember{ mutableStateOf(false) }
     var gameOver by remember{ mutableStateOf(Pair(false,"")) }
     var levelUp by remember{ mutableStateOf(Pair(false,0)) }
     var levelPopUp by remember{ mutableStateOf(false) }
@@ -255,10 +256,13 @@ fun ArenaScreen(
             }
         }else{
             userRepository.performDatabaseOperation(Dispatchers.IO){
-                if (!levelUp.first){
-                    levelUp = userRepository.levelUp((foe.exp+(foe.exp*(user.charisma/100))),user.id)
+                if (!receivedEXP){
+                    if (!levelUp.first){
+                        levelUp = userRepository.levelUp((foe.exp+(foe.exp*(user.charisma/100))),user.id)
+                    }
+                    userRepository.toggleCoins(foe.coins+(foe.coins*(user.charisma/100)),user.id)
+                    receivedEXP = true
                 }
-                userRepository.toggleCoins(foe.coins+(foe.coins*(user.charisma/100)),user.id)
             }
             Box(
                 Modifier.fillMaxSize(),

@@ -39,7 +39,15 @@ fun HitCharacterAnimation(attack:Pair<Boolean,String>, turn:Int,damage:Pair<Bool
         //Bellow are all animation effects based on type
         if (attack.first){
             showDamage = true
-            when (attack.second){
+
+            opacityEffect = 0f
+            colorTint  = null
+            repeat(10) {
+                delay(50)
+                opacity = 1f - opacity
+            }
+            opacity = 1f
+            /*when (attack.second){
                 "normal" -> {
                     opacityEffect = 0f
                     colorTint  = null
@@ -109,7 +117,7 @@ fun HitCharacterAnimation(attack:Pair<Boolean,String>, turn:Int,damage:Pair<Bool
                     colorTint  = null
                     opacityEffect = 0f
                 }
-            }
+            }*/
             showDamage = false
         }
     }
