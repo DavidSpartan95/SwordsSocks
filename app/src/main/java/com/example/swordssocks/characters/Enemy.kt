@@ -1,16 +1,23 @@
 package com.example.swordssocks.characters
 
+import androidx.compose.ui.graphics.Color
+import com.example.swordssocks.R
 import com.example.swordssocks.database.DrawInstruction
 import com.example.swordssocks.database.Inventory
 import com.example.swordssocks.database.User
 import com.example.swordssocks.game_components.shop.armorShop
 import com.example.swordssocks.game_components.shop.weaponArray
-import com.example.swordssocks.gladiator_items.Armor
-import com.example.swordssocks.gladiator_items.Weapon
-import com.example.swordssocks.gladiator_items.woodSword
+import com.example.swordssocks.gladiator_items.*
 import kotlin.random.Random
 
+
 fun generateFoe(userLevel: Int):User{
+    return when(userLevel){
+        10 -> level10Boss(userLevel)
+        else -> generateRandomFoe(userLevel)
+    }
+}
+fun generateRandomFoe(userLevel: Int):User{
     val stats = randomizeStats(14+(12*userLevel))
     return User(
         name = "Angry Man",
@@ -26,6 +33,32 @@ fun generateFoe(userLevel: Int):User{
         inventory = randomizeInventory(userLevel)
     )
 }
+fun level10Boss(userLevel: Int):User{
+    return User(
+        name = "Zombie",
+        health = 25,
+        strength = 45,
+        charisma = 5,
+        defence = 25,
+        magic = 25,
+        coins = (395*userLevel/7),
+        exp = (330),
+        level = userLevel,
+        draw = DrawInstruction(
+            R.drawable.boss_1,
+            Color.White,
+            R.drawable.boss_1,
+            R.drawable.boss_1,
+            R.drawable.boss_1,
+        ),
+        inventory = Inventory(
+            arrayListOf(),
+            arrayListOf(Weapon("spear",30,90,"normal",15,R.drawable.boss_1,R.drawable.boss_1,0)),
+            arrayListOf(basicSandal, basicSocks,leatherChestplate,leatherLeggings)
+        )
+    )
+}
+
 
 fun randomizeStats(skillPoints:Int):Array<Int>{
     var points = skillPoints

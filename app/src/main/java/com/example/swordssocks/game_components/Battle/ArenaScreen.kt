@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.swordssocks.characters.generateFoe
+import com.example.swordssocks.characters.level10Boss
 import com.example.swordssocks.database.User
 import com.example.swordssocks.database.UserRepository
 import com.example.swordssocks.game_components.Battle.LevelUpPopUp
@@ -46,7 +47,7 @@ fun ArenaScreen(
     var levelPopUp by remember{ mutableStateOf(false) }
     var potions by remember{ mutableStateOf(findAllPotions(user)) }
     var damage by remember{ mutableStateOf(Pair(false,0)) }
-    var foe by remember { mutableStateOf(generateFoe(user.level)) }
+    val foe by remember { mutableStateOf(generateFoe(user.level)) }
     var attack by remember { mutableStateOf(Pair(false,"normal")) }
     var attNumUser by remember { mutableStateOf(0) }
     var attNumFoe by remember { mutableStateOf(0) }
