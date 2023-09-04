@@ -55,7 +55,6 @@ fun ArenaScreen(
     var armor by remember { mutableStateOf(playerArmorValue(user)) }
     var foeArmor by remember { mutableStateOf(playerArmorValue(foe)) }
     var foeHP by remember { mutableStateOf(foe.health*2+10) }
-
     val allButtons = arrayOf(
         arrayOf(
             Triple("Fight",ButtonInfo(Alignment.TopStart,Color.Red))
