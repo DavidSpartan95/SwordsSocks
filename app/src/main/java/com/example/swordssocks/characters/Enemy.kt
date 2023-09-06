@@ -54,6 +54,7 @@ fun level10Boss(userLevel: Int):User{
         inventory = Inventory(
             arrayListOf(),
             arrayListOf(Weapon("spear",30,90,"normal",15,R.drawable.boss_1,R.drawable.boss_1,0)),
+            //TODO make cuztom armor with R.drawable.boss_1 as painter
             arrayListOf(basicSandal, basicSocks,leatherChestplate,leatherLeggings)
         )
     )

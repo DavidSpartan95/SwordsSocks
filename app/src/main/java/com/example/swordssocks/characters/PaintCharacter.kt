@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.swordssocks.database.Inventory
 import com.example.swordssocks.database.User
 
 
@@ -83,14 +84,16 @@ fun CharacterDisplay(
             colorFilter = colorTint,
         )
         //Hair
-        Image(
-            painter = painterResource(user.draw.hair),
-            contentDescription = null,
-            modifier = Modifier
-                .size(sizeDP)
-                .graphicsLayer(alpha = opacity),
-            colorFilter = hairColor
-        )
+        if (!hasHelmet(user.inventory)){
+            Image(
+                painter = painterResource(user.draw.hair),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(sizeDP)
+                    .graphicsLayer(alpha = opacity),
+                colorFilter = hairColor
+            )
+        }
         //eyes
         Image(
             painter = painterResource(user.draw.eyes),
@@ -118,6 +121,7 @@ fun CharacterDisplay(
                             .size(sizeDP).graphicsLayer(alpha = opacity),
                         colorFilter = colorTint,
                     )
+                    break
                 }
             }
             //Sandals
@@ -186,4 +190,12 @@ fun CharacterDisplay(
             }
         }
     }
+}
+fun hasHelmet(inventory:Inventory): Boolean{
+    for (x in inventory.armors){
+        if (x.part == "Helmet"){
+            return true
+        }
+    }
+    return false
 }
