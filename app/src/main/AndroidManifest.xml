@@ -12,7 +12,7 @@
         android:theme="@style/Theme.SwordsSocks"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.davidspartangame.swordssocks.MainActivity"
             android:exported="true"
             android:screenOrientation="landscape"
             android:label="@string/app_name"

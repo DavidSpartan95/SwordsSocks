@@ -6,11 +6,11 @@ plugins {
 apply plugin: 'kotlin-kapt'
 
 android {
-    namespace 'com.example.swordssocks'
+    namespace 'com.davidspartangame.swordssocks'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.swordssocks"
+        applicationId "com.davidspartangame.swordssocks"
         minSdk 24
         targetSdk 33
         versionCode 1
