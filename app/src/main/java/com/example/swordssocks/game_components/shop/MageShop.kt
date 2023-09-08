@@ -46,13 +46,7 @@ fun MagePopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
             )
         )
         }
-
-        //remove items user already have
-        LaunchedEffect(weaponStock){
-            for (x in user.inventory.meleeWeapons){
-                weaponStock = mageArray.filter { it != x }.toTypedArray()
-            }
-        }
+        var ownedStaff  by remember { mutableStateOf(user.inventory.meleeWeapons) }
 
         Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
             Box(
@@ -142,7 +136,11 @@ fun MagePopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
                                                     "Acc: ${weaponStock[index-potionStock.size].acc}",
                                                     "Crit: ${weaponStock[index-potionStock.size].criticalChance}%",
                                                 )
-                                                price = weaponStock[index-potionStock.size].price
+                                                price = if (containsWeapon(ownedStaff,weaponStock[index-potionStock.size])){
+                                                    0
+                                                } else {
+                                                    weaponStock[index-potionStock.size].price
+                                                }
                                             }
                                     )
                                 }
@@ -207,19 +205,19 @@ fun MagePopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
                     }
                     Button(
                         onClick = {
-                            if (selected < potionStock.size){
+                            if (selected < potionStock.size && user.coins >= price){
                                 userRepository.performDatabaseOperation(Dispatchers.IO){
-                                    if (user.coins >= price){
-                                        userRepository.buyItem(Inventory(arrayListOf(potionStock[selected]), arrayListOf(),arrayListOf()),user)
-                                        coins -= price
-                                    }
+
+                                    userRepository.buyItem(Inventory(arrayListOf(potionStock[selected]), arrayListOf(),arrayListOf()),user)
+                                    coins -= price
                                 }
                             }else {
+                                ownedStaff += weaponStock[selected-potionStock.size]
                                 userRepository.performDatabaseOperation(Dispatchers.IO){
-                                    if (user.coins >= price){
-                                        userRepository.buyItem(Inventory(arrayListOf(), arrayListOf(weaponStock[selected-potionStock.size]),arrayListOf()),user)
-                                        coins -= price
-                                    }
+
+                                    userRepository.buyItem(Inventory(arrayListOf(), arrayListOf(weaponStock[selected-potionStock.size]),arrayListOf()),user)
+                                    coins -= price
+                                    price = 0
                                 }
                             }
                         },
@@ -227,12 +225,21 @@ fun MagePopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
                             .align(Alignment.BottomCenter),
                         colors = ButtonDefaults.buttonColors(backgroundColor = DarkOrange)
                     ) {
-                        Text(text = "Buy ($price)", color = Color.White)
+                        val text = if (price == 0) "owned" else price.toString()
+                        Text(text = "Buy ($text)", color = Color.White)
                     }
                 }
             }
         }
     }
+}
+fun containsWeapon(array: ArrayList<Weapon>, armor: Weapon):Boolean {
+    for (x in array){
+        if (x.name == armor.name){
+            return true
+        }
+    }
+    return false
 }
 val potionArray = arrayOf(
     smallPotion,

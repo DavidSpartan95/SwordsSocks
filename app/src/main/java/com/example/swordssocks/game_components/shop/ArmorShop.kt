@@ -36,9 +36,9 @@ fun ArmorPopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
 
         var selectedItem: Int by remember { mutableStateOf(0) }
         var displayItem: Armor by remember { mutableStateOf(armorShop[selectedItem]) }
-        var armorStock by remember { mutableStateOf(armorShop)}
+        val armorStock by remember { mutableStateOf(armorShop)}
         var coins: Int by remember { mutableStateOf(user.coins) }
-        //remove items user already have
+        var ownedArmor by remember { mutableStateOf(user.inventory.armors) }
 
         Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
             Box(
@@ -155,27 +155,50 @@ fun ArmorPopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
                             exitFn.invoke()
                         }
                     }
-                    Button(
-                        onClick = {
-                            userRepository.performDatabaseOperation(Dispatchers.IO){
-                                if (user.coins >= displayItem.price){
-                                    userRepository.buyItem(Inventory(arrayListOf(), arrayListOf(),arrayListOf(displayItem)),user)
-                                    coins -= displayItem.price
+                    if (!containsArmor(ownedArmor,displayItem)){
+                        Button(
+                            onClick = {
+                                ownedArmor += displayItem
+                                userRepository.performDatabaseOperation(Dispatchers.IO){
+                                    if (user.coins >= displayItem.price){
+                                        userRepository.buyItem(Inventory(arrayListOf(), arrayListOf(),arrayListOf(displayItem)),user)
+                                        coins -= displayItem.price
+                                    }
                                 }
-                            }
-                        },
-                        Modifier
-                            .align(Alignment.BottomCenter),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = DarkOrange)
-                    ) {
-                        Text(text = "Buy (${displayItem.price})", color = Color.White)
+                            },
+                            Modifier
+                                .align(Alignment.BottomCenter),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = DarkOrange)
+                        ) {
+                            Text(text = "Buy (${displayItem.price})", color = Color.White)
 
+                        }
+                    }else {
+                        Button(
+                            onClick = {
+                            },
+                            Modifier
+                                .align(Alignment.BottomCenter),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = DarkOrange)
+                        ) {
+                            Text(text = "Owned", color = Color.White)
+
+                        }
                     }
                 }
             }
         }
 
     }
+}
+
+fun containsArmor(array: ArrayList<Armor>, armor: Armor):Boolean {
+    for (x in array){
+        if (x.name == armor.name){
+            return true
+        }
+    }
+    return false
 }
 val armorShop = arrayOf(
     basicSandal,

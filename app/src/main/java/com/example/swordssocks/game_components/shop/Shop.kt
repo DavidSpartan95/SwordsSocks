@@ -36,8 +36,10 @@ fun WeaponPopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
 
         var selectedItem: Int by remember { mutableStateOf(0) }
         var displayItem: Weapon by remember { mutableStateOf(weaponArray[selectedItem]) }
-        var weaponStock by remember { mutableStateOf(weaponArray)}
+        val weaponStock by remember { mutableStateOf(weaponArray)}
         var coins: Int by remember { mutableStateOf(user.coins) }
+        var ownedWeapons by remember { mutableStateOf(user.inventory.meleeWeapons)}
+
 
         Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
             Box(Modifier
@@ -154,21 +156,36 @@ fun WeaponPopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
                             exitFn.invoke()
                         }
                     }
-                    Button(
-                        onClick = {
-                            userRepository.performDatabaseOperation(Dispatchers.IO){
-                                if (user.coins >= displayItem.price){
-                                    userRepository.buyItem(Inventory(arrayListOf(), arrayListOf(displayItem),arrayListOf()),user)
-                                    coins -= displayItem.price
+                    if (!containsWeapon(ownedWeapons, displayItem)){
+                        Button(
+                            onClick = {
+                                userRepository.performDatabaseOperation(Dispatchers.IO){
+                                    if (user.coins >= displayItem.price){
+                                        userRepository.buyItem(Inventory(arrayListOf(), arrayListOf(displayItem),arrayListOf()),user)
+                                        coins -= displayItem.price
+                                        ownedWeapons+= displayItem
+                                    }
                                 }
-                            }
-                        },
-                        Modifier
-                            .align(Alignment.BottomCenter),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = DarkOrange)
-                    ) {
-                        Text(text = "Buy (${displayItem.price})", color = Color.White)
+                            },
+                            Modifier
+                                .align(Alignment.BottomCenter),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = DarkOrange)
+                        ) {
+                            Text(text = "Buy (${displayItem.price})", color = Color.White)
 
+                        }
+                    }else{
+                        Button(
+                            onClick = {
+
+                            },
+                            Modifier
+                                .align(Alignment.BottomCenter),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = DarkOrange)
+                        ) {
+                            Text(text = "Owned", color = Color.White)
+
+                        }
                     }
                 }
             }
