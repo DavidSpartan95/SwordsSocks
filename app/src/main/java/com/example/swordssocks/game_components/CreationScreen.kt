@@ -1,7 +1,6 @@
 package com.example.swordssocks.game_components
 
-import android.util.Log
-import android.view.KeyEvent
+
 import android.view.MotionEvent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,11 +20,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,7 +37,6 @@ import com.example.swordssocks.R
 import com.example.swordssocks.characters.containsOnlyAlphabets
 import com.example.swordssocks.characters.randomNameGenerator
 import com.example.swordssocks.database.*
-import com.example.swordssocks.gladiator_items.Potion
 import com.example.swordssocks.gladiator_items.Weapon
 import com.example.swordssocks.gladiator_items.smallPotion
 import com.example.swordssocks.nav_graph.Screen
@@ -117,7 +112,6 @@ fun CreationScreen(
         },{screenSelected--})}
     }
 }
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun PickName(fnForward: () -> Unit,fnBack:() -> Unit) {
 

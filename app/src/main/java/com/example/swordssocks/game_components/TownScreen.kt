@@ -38,7 +38,7 @@ fun TownScreen(
     val scrollState = rememberScrollState(239)
     var user by remember { mutableStateOf(userEnter) }
 
-    LaunchedEffect(false){
+    LaunchedEffect(popUp){
         if (user.id == null){
             val userList = retrieveAllUsers(userRepository)
             user = userList[userList.size-1]

@@ -43,7 +43,7 @@ fun ArmorPopup(user: User, userRepository: UserRepository, exitFn: ()-> Unit) {
         Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
             Box(
                 Modifier
-                    .width(150.dp)
+                    .width(300.dp)
                     .height(50.dp)
                     .padding(end = 10.dp, top = 10.dp)
                     .clip(RoundedCornerShape(15.dp))

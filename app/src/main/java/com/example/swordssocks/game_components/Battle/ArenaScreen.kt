@@ -247,7 +247,7 @@ fun ArenaScreen(
                 contentAlignment = Alignment.Center
             ) {
                 LevelUpPopUp(userRepository,user = user, skillPoints = (12*levelUp.second)) {
-                    levelPopUp = false
+
                     userRepository.performDatabaseOperation(Dispatchers.IO){
                         val userJson = Gson().toJson(userRepository.getById(user.id))
                         CoroutineScope(Dispatchers.Main).launch {
